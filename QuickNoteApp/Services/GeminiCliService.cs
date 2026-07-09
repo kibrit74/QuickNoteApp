@@ -10,7 +10,7 @@ namespace QuickNoteApp.Services;
 public class GeminiCliService
 {
     private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(120);
-    private const string DefaultModelName = "gemini-2.5-pro";
+    private const string DefaultModelName = "gemini-2.5-flash";
 
     public async Task<string> SummarizeAsync(string instruction, string noteText, string? imagePath = null, IReadOnlyList<string>? filePaths = null)
     {
