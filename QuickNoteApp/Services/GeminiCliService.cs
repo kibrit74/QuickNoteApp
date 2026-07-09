@@ -312,7 +312,7 @@ public class GeminiCliService
         if (!string.IsNullOrWhiteSpace(error))
             return "Gemini CLI hata verdi: " + error;
 
-        return "Gemini CLI boş cevap döndürdü.";
+        return $"Gemini CLI boş cevap döndürdü. (Çıkış Kodu: {process.ExitCode})";
     }
 
     private static Process? StartProcess(string fileName, string arguments, string workingDirectory, bool redirectInput)
