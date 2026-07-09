@@ -121,6 +121,19 @@ public partial class QuickNoteWindow : Window
         }
     }
 
+    private void SetStatusTemporary(string text, int delayMs = 5000)
+    {
+        if (CopilotStatusText == null) return;
+        CopilotStatusText.Text = text;
+
+        _ = Task.Delay(delayMs).ContinueWith(_ => Dispatcher.Invoke(() => {
+            if (CopilotStatusText.Text == text)
+            {
+                CopilotStatusText.Text = "Hazır";
+            }
+        }));
+    }
+
     private void OpenGeminiOnboardingButton_Click(object sender, RoutedEventArgs e)
     {
         var window = new GeminiOnboardingWindow { Owner = this };
@@ -422,17 +435,17 @@ public partial class QuickNoteWindow : Window
 
             if (string.IsNullOrWhiteSpace(response) || IsGeminiStatus(response))
             {
-                CopilotStatusText.Text = string.IsNullOrWhiteSpace(response) ? "Gemini takvim cevabi vermedi." : response;
+                SetStatusTemporary(string.IsNullOrWhiteSpace(response) ? "Gemini takvim cevabi vermedi." : response, 6000);
                 return;
             }
 
             _lastGeminiResponse = response;
             NoteInputText = AppendSection(NoteInputText, $"Gemini: {question}", response);
-            CopilotStatusText.Text = $"Gemini {targetDate:dd.MM.yyyy} takvim sonucunu nota ekledi.";
+            SetStatusTemporary($"Gemini {targetDate:dd.MM.yyyy} takvim sonucunu nota ekledi.", 6000);
         }
         catch (Exception ex)
         {
-            CopilotStatusText.Text = $"Gemini takvim sorgulama hatasi: {ex.Message}";
+            SetStatusTemporary($"Gemini takvim sorgulama hatasi: {ex.Message}", 8000);
         }
     }
 
@@ -468,17 +481,17 @@ public partial class QuickNoteWindow : Window
 
             if (string.IsNullOrWhiteSpace(response) || IsGeminiStatus(response))
             {
-                CopilotStatusText.Text = string.IsNullOrWhiteSpace(response) ? "Gemini veritabanı cevabı vermedi." : response;
+                SetStatusTemporary(string.IsNullOrWhiteSpace(response) ? "Gemini veritabanı cevabı vermedi." : response, 6000);
                 return;
             }
 
             _lastGeminiResponse = response;
             NoteInputText = AppendSection(NoteInputText, $"Gemini: {question}", response);
-            CopilotStatusText.Text = "Gemini veritabanı sonucunu nota ekledi.";
+            SetStatusTemporary("Gemini veritabanı sonucunu nota ekledi.", 6000);
         }
         catch (Exception ex)
         {
-            CopilotStatusText.Text = $"Gemini veritabanı arama hatası: {ex.Message}";
+            SetStatusTemporary($"Gemini veritabanı arama hatası: {ex.Message}", 8000);
         }
     }
 
@@ -488,7 +501,7 @@ public partial class QuickNoteWindow : Window
         var hasFiles = _selectedFilePaths.Any(File.Exists);
         if (string.IsNullOrWhiteSpace(prompt) && string.IsNullOrWhiteSpace(_selectedImagePath) && !hasFiles)
         {
-            CopilotStatusText.Text = "Gemini'ye gönderilecek not, resim veya dosya yok.";
+            SetStatusTemporary("Gemini'ye gönderilecek not, resim veya dosya yok.", 5000);
             return;
         }
 
@@ -499,7 +512,7 @@ public partial class QuickNoteWindow : Window
 
             if (IsGeminiStatus(response))
             {
-                CopilotStatusText.Text = response;
+                SetStatusTemporary(response, 6000);
                 return;
             }
 
@@ -508,7 +521,7 @@ public partial class QuickNoteWindow : Window
             {
                 _lastGeminiResponse = prompt;
                 ExportTextToCsv(prompt);
-                CopilotStatusText.Text = "Gemini tablo döndürmedi; not içeriği CSV olarak oluşturuldu.";
+                SetStatusTemporary("Gemini tablo döndürmedi; not içeriği CSV olarak oluşturuldu.", 6000);
                 return;
             }
 
@@ -516,11 +529,11 @@ public partial class QuickNoteWindow : Window
             NoteInputText = AppendSection(NoteInputText, heading, response);
             if (shouldExport)
                 ExportTextToCsv(response);
-            CopilotStatusText.Text = "Gemini cevabı nota eklendi.";
+            SetStatusTemporary("Gemini cevabı nota eklendi.", 6000);
         }
         catch (Exception ex)
         {
-            CopilotStatusText.Text = $"Gemini hatası: {ex.Message}";
+            SetStatusTemporary($"Gemini hatası: {ex.Message}", 8000);
         }
     }
     private static bool IsGeminiStatus(string response)
