@@ -82,6 +82,8 @@ public partial class QuickNoteWindow : Window
 
         _calendarPolling.StatusChanged += () => Dispatcher.Invoke(UpdateCalendarStatusUI);
         UpdateCalendarStatusUI();
+
+        Loaded += (s, e) => GeminiOnboardingWindow.ShowFirstRunIfNeeded(this);
     }
 
     private void OpenGeminiOnboardingButton_Click(object sender, RoutedEventArgs e)
