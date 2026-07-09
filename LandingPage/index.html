@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickNoteApp — Fikirlerinizi Düşünce Hızında Yakalayın</title>
+    <meta name="description" content="Windows için ultra hızlı, klavye odaklı not alma ve akıllı bildirim takip uygulaması. Tamamen yerel SQLite veritabanı ile gizliliğiniz güvende.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Main Style Sheet -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header class="app-header">
+        <div class="container header-container">
+            <a href="#" class="logo" id="header-logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="3" y="3" width="18" height="18" rx="5" fill="#D9383A" />
+                    <path d="M7 9H17M7 12H14M7 15H11" stroke="#F5EFE6" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <span>QuickNote<span class="text-accent">App</span></span>
+            </a>
+            <nav class="main-nav" id="main-navigation">
+                <a href="#ozellikler">Özellikler</a>
+                <a href="#simulator">Simülatör</a>
+                <a href="#arayuz">Arayüz</a>
+                <a href="#kurulum">Kurulum</a>
+            </nav>
+            <div class="header-cta">
+                <a href="https://github.com/kibrit74/QuickNoteApp/releases/latest/download/QuickNoteApp-Kurulum.zip" class="btn btn-beige btn-sm" id="btn-header-download">İndir</a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-bg-glow"></div>
+            <div class="container hero-container">
+                <div class="hero-content">
+                    <span class="badge" id="hero-tag">🔥 Windows İçin En Hızlı Not Defteri</span>
+                    <h1 class="hero-title">
+                        Fikirlerinizi <span class="text-gradient">Düşünce Hızında</span> Yakalayın
+                    </h1>
+                    <p class="hero-description">
+                        Ekranınızı kaplayan hantal pencereleri unutun. <kbd>Ctrl+Shift+N</kbd> ile anında not alın, <kbd>Enter</kbd> ile kaydedin. Tüm bildirimleriniz ve yapılacak işleriniz tek ekranda toplansın.
+                    </p>
+                    <div class="hero-actions">
+                        <a href="https://github.com/kibrit74/QuickNoteApp/releases/latest/download/QuickNoteApp-Kurulum.zip" class="btn btn-red" id="btn-hero-download">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                            Hemen İndir (Windows)
+                        </a>
+                        <a href="#simulator" class="btn btn-outline" id="btn-hero-try">
+                            Canlı Deneyin
+                        </a>
+                    </div>
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <strong>100% Yerel</strong>
+                            <span>Bulut Yok, Tam Gizlilik</span>
+                        </div>
+                        <div class="stat-divider"></div>
+                        <div class="stat-item">
+                            <strong>&lt; 50ms</strong>
+                            <span>Açılış Tepki Süresi</span>
+                        </div>
+                        <div class="stat-divider"></div>
+                        <div class="stat-item">
+                            <strong>SQLite</strong>
+                            <span>Güvenli Veri Depolama</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hero Mockup Window -->
+                <div class="hero-mockup-wrapper">
+                    <div class="hero-mockup-window glass-panel">
+                        <div class="window-header">
+                            <div class="window-dots">
+                                <span class="dot close"></span>
+                                <span class="dot minimize"></span>
+                                <span class="dot maximize"></span>
+                            </div>
+                            <div class="window-title">QuickNoteApp - Hızlı Ekle</div>
+                        </div>
+                        <div class="window-body">
+                            <div class="mock-input-area">
+                                <span class="mock-cursor-line">Projeyi bu akşam yayınlamayı unutma!</span>
+                                <span class="cursor-blinker">|</span>
+                            </div>
+                            <div class="mock-footer">
+                                <span class="mock-hotkey-hint">Kaydetmek için <span class="keyboard-badge">Enter</span>'a basın</span>
+                                <span class="mock-char-counter">36 karakter</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Grid Section -->
+        <section id="ozellikler" class="features-section">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-subtitle">Neden QuickNoteApp?</span>
+                    <h2 class="section-title">Hız ve Verimlilik İçin Tasarlandı</h2>
+                    <p class="section-description">Çalışma akışınızı bölmeden not alın, dikkat dağınıklığını en aza indirin.</p>
+                </div>
+
+                <div class="features-grid">
+                    <!-- Feature Card 1 -->
+                    <div class="feature-card glass-panel" id="feature-speed">
+                        <div class="feature-icon-wrapper red-glow">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                        </div>
+                        <h3>Milisaniyeler İçinde Erişim</h3>
+                        <p>Klavye kısayolu ile sistemin her yerinden anında tetiklenir. Fokus kaybetmeden notunuzu alır ve hemen işinize dönersiniz.</p>
+                    </div>
+
+                    <!-- Feature Card 2 -->
+                    <div class="feature-card glass-panel" id="feature-review">
+                        <div class="feature-icon-wrapper red-glow">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                        </div>
+                        <h3>Günlük Özet Ekranı</h3>
+                        <p><kbd>Ctrl+Shift+R</kbd> ile gün sonu özetini açarak aldığınız notları onay kutularıyla listeleyin, yapacaklarınızı tamamlayın.</p>
+                    </div>
+
+                    <!-- Feature Card 3 -->
+                    <div class="feature-card glass-panel" id="feature-database">
+                        <div class="feature-icon-wrapper red-glow">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5M3 12c0 1.66 4 3 9 3s9-1.34 9-3"/></svg>
+                        </div>
+                        <h3>Tamamen Yerel & Güvenli</h3>
+                        <p>Hiçbir veriniz internete aktarılmaz. Notlarınız ve bildirim geçmişiniz bilgisayarınızdaki yerel SQLite dosyasında saklanır.</p>
+                    </div>
+
+                    <!-- Feature Card 4 -->
+                    <div class="feature-card glass-panel" id="feature-notifications">
+                        <div class="feature-icon-wrapper red-glow">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                        </div>
+                        <h3>Akıllı Bildirim Takibi</h3>
+                        <p>Windows bildirimlerinizi arka planda izler; hangi uygulamadan kaç kez bildirim aldığınızı gruplu bir şekilde özetler.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Simulator Section -->
+        <section id="simulator" class="simulator-section">
+            <div class="container">
+                <div class="simulator-layout">
+                    <div class="simulator-info">
+                        <span class="badge red-badge" id="sim-badge">Etkileşimli Deneyim</span>
+                        <h2>Tarayıcınızda Test Edin</h2>
+                        <p class="lead-text">Kurulum yapmadan önce çalışma mantığını deneyimleyin. Alttaki butona tıklayın veya klavyenizden tetikleyin.</p>
+                        
+                        <div class="instruction-box">
+                            <div class="shortcut-tip">
+                                <span class="hotkey-btn"><kbd>Ctrl</kbd></span> + 
+                                <span class="hotkey-btn"><kbd>Shift</kbd></span> + 
+                                <span class="hotkey-btn"><kbd>N</kbd></span>
+                            </div>
+                            <p>Klavye kısayolu ile hızlı not penceresini simüle edin.</p>
+                        </div>
+
+                        <div class="sim-actions-wrapper">
+                            <button class="btn btn-red btn-pulse" id="btn-trigger-note-sim">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                                Hızlı Not Penceresini Aç
+                            </button>
+                            <button class="btn btn-outline" id="btn-trigger-review-sim">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                                Günlük Özet Ekranını Aç
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Virtual Desktop Container -->
+                    <div class="virtual-desktop glass-panel" id="desktop-canvas">
+                        <div class="desktop-wallpaper">
+                            <!-- Grid lines or shapes -->
+                            <div class="wallpaper-logo">QN</div>
+                            <span class="wallpaper-tip">Sanal Masaüstü</span>
+                        </div>
+
+                        <!-- Simulated Quick Note Popup Window (initially hidden or active on click) -->
+                        <div class="sim-window note-window" id="sim-note-popup">
+                            <div class="sim-window-header">
+                                <div class="sim-window-dots">
+                                    <span class="sim-dot-close" id="close-note-popup"></span>
+                                </div>
+                                <span class="sim-window-title">Hızlı Not Al</span>
+                            </div>
+                            <div class="sim-window-body">
+                                <textarea id="sim-note-input" placeholder="Hızlıca bir not yazın ve Enter'a basın..." maxlength="150"></textarea>
+                                <div class="sim-window-footer">
+                                    <span class="sim-tip">Kaydetmek için <kbd>Enter</kbd></span>
+                                    <span class="sim-counter" id="sim-char-counter">0 / 150</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Simulated Daily Review Window (initially hidden) -->
+                        <div class="sim-window review-window" id="sim-review-popup">
+                            <div class="sim-window-header">
+                                <div class="sim-window-dots">
+                                    <span class="sim-dot-close" id="close-review-popup"></span>
+                                </div>
+                                <span class="sim-window-title">Gün Sonu Özet Ekranı</span>
+                            </div>
+                            <div class="sim-window-body">
+                                <div class="review-tabs">
+                                    <button class="review-tab active" id="tab-notes">Notlarım (<span id="notes-count">2</span>)</button>
+                                    <button class="review-tab" id="tab-notifications">Bildirimler (<span id="notifs-count">3</span>)</button>
+                                </div>
+                                
+                                <div class="review-tab-content active" id="content-notes">
+                                    <p class="tab-desc">Bugün aldığınız notlar. Tamamladıklarınızı işaretleyin:</p>
+                                    <ul class="sim-notes-list" id="sim-notes-ul">
+                                        <li>
+                                            <label class="checkbox-container">
+                                                <input type="checkbox" checked>
+                                                <span class="checkmark"></span>
+                                                <span class="note-text">DatabaseService SQLite ayarlarını kontrol et.</span>
+                                            </label>
+                                        </li>
+                                        <li>
+                                            <label class="checkbox-container">
+                                                <input type="checkbox">
+                                                <span class="checkmark"></span>
+                                                <span class="note-text">UI renk paletini güncelle (kırmızı, bej, füme, siyah).</span>
+                                            </label>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <div class="review-tab-content" id="content-notifications">
+                                    <p class="tab-desc">Bugün gelen bildirimlerin uygulama bazlı dağılımı:</p>
+                                    <div class="sim-notification-list">
+                                        <div class="sim-notif-item">
+                                            <div class="app-info">
+                                                <span class="app-icon whatsapp">W</span>
+                                                <span class="app-name">WhatsApp</span>
+                                            </div>
+                                            <span class="notif-badge">14 Bildirim</span>
+                                        </div>
+                                        <div class="sim-notif-item">
+                                            <div class="app-info">
+                                                <span class="app-icon outlook">O</span>
+                                                <span class="app-name">Outlook</span>
+                                            </div>
+                                            <span class="notif-badge">5 Bildirim</span>
+                                        </div>
+                                        <div class="sim-notif-item">
+                                            <div class="app-info">
+                                                <span class="app-icon github">G</span>
+                                                <span class="app-name">GitHub Desktop</span>
+                                            </div>
+                                            <span class="notif-badge">2 Bildirim</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- System Tray Toast Simulator -->
+                        <div class="sim-toast" id="sim-toast-alert">
+                            <div class="toast-icon font-success">✓</div>
+                            <div class="toast-body">
+                                <h4>Not Kaydedildi</h4>
+                                <p id="toast-note-text">Not başarıyla yerel SQLite tabanına eklendi.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Layout Gallery & UI Detail Section -->
+        <section id="arayuz" class="gallery-section">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-subtitle">Tasarım Ayrıntıları</span>
+                    <h2 class="section-title">Karanlık ve Akıcı Masaüstü Deneyimi</h2>
+                    <p class="section-description">Windows 11 Fluent Design dili ile uyumlu, füme ve siyah tonlarında modern arayüz.</p>
+                </div>
+
+                <!-- Tabbed UI Previews -->
+                <div class="gallery-tabs-wrapper">
+                    <div class="gallery-tabs-nav">
+                        <button class="gallery-tab-btn active" data-target="gallery-note">
+                            <span>01</span> Hızlı Not Penceresi
+                        </button>
+                        <button class="gallery-tab-btn" data-target="gallery-review">
+                            <span>02</span> Gün Sonu Özet Ekranı
+                        </button>
+                        <button class="gallery-tab-btn" data-target="gallery-tray">
+                            <span>03</span> Sistem Tepsisi &amp; Menü
+                        </button>
+                    </div>
+
+                    <div class="gallery-contents">
+                        <!-- Slide 1 -->
+                        <div class="gallery-content-slide active" id="gallery-note">
+                            <div class="gallery-grid">
+                                <div class="gallery-text">
+                                    <h3>Minimalist Hızlı Not Girişi</h3>
+                                    <p>Herhangi bir programda çalışırken klavyenizden kısayola bastığınızda odak doğrudan bu pencereye gelir. Hiçbir fare hareketi gerektirmeden yazmaya başlarsınız.</p>
+                                    <ul class="detail-list">
+                                        <li><span>Açılış Süresi:</span> Hızlı yükleme için optimize edilmiş hafif pencere.</li>
+                                        <li><span>Otomatik Boyutlandırma:</span> Yazdıkça metin alanını optimize eden dinamik yapı.</li>
+                                        <li><span>Kolay Kaydetme:</span> Metin bittiğinde <kbd>Enter</kbd> ile SQLite veritabanına doğrudan kayıt.</li>
+                                    </ul>
+                                </div>
+                                <div class="gallery-image-panel glass-panel">
+                                    <div class="windows-titlebar">
+                                        <span class="bar-title">Hızlı Not Defteri</span>
+                                        <div class="bar-controls"><span class="close-x">✕</span></div>
+                                    </div>
+                                    <div class="inner-mockup note-mock">
+                                        <div class="mock-textbox">
+                                            <p class="highlighted-text">Toplantı notlarını hazırlayıp ekibe e-posta ile gönder.</p>
+                                        </div>
+                                        <div class="mock-actions">
+                                            <span>Karakter: 51</span>
+                                            <span class="badge-accent">Windows Kısayolu</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Slide 2 -->
+                        <div class="gallery-content-slide" id="gallery-review">
+                            <div class="gallery-grid">
+                                <div class="gallery-text">
+                                    <h3>Günlük Check-list ve Bildirim Paneli</h3>
+                                    <p>Gün sonunda aldığınız tüm notları tek bir yerde toplayıp sırayla üstünü çizebilirsiniz. Bildirim analizi sayesinde hangi uygulamalardan çok sayıda bildirim geldiğini gözlemleyebilirsiniz.</p>
+                                    <ul class="detail-list">
+                                        <li><span>Checkbox Kontrolleri:</span> Tamamlanan notları tek tıkla işaretleyin ve silin.</li>
+                                        <li><span>Bildirim Sayaçları:</span> Dikkat dağıtan uygulamaları analiz etmek için akıllı sayaçlar.</li>
+                                        <li><span>Yedekleme Kolaylığı:</span> SQLite veritabanından çıktı alma imkanı.</li>
+                                    </ul>
+                                </div>
+                                <div class="gallery-image-panel glass-panel">
+                                    <div class="windows-titlebar">
+                                        <span class="bar-title">Gün Sonu Özet Ekranı</span>
+                                        <div class="bar-controls"><span class="close-x">✕</span></div>
+                                    </div>
+                                    <div class="inner-mockup review-mock">
+                                        <div class="mock-review-header">
+                                            <h4>Bugün Neler Yaptın?</h4>
+                                            <span>4 Temmuz 2026</span>
+                                        </div>
+                                        <div class="mock-list-items">
+                                            <div class="mock-list-item checked">
+                                                <span class="mock-box">✓</span>
+                                                <span class="mock-text-strike">Mail kutusunu temizle</span>
+                                            </div>
+                                            <div class="mock-list-item">
+                                                <span class="mock-box"></span>
+                                                <span>Fatura ödemelerini kontrol et</span>
+                                            </div>
+                                            <div class="mock-list-item">
+                                                <span class="mock-box"></span>
+                                                <span>Haftalık raporu tamamla</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Slide 3 -->
+                        <div class="gallery-content-slide" id="gallery-tray">
+                            <div class="gallery-grid">
+                                <div class="gallery-text">
+                                    <h3>Sistem Tepsisinde Sessiz Çalışma</h3>
+                                    <p>QuickNoteApp arka planda son derece az RAM tüketecek şekilde (.NET 8 Native AOT optimizasyonu ile) sessizce çalışır. Sağ tıklayarak ayarları yönetebilir ve geçmişe erişebilirsiniz.</p>
+                                    <ul class="detail-list">
+                                        <li><span>Ram Dostu:</span> Sistem tepsisinde çalışırken 15 MB'tan az bellek kullanımı.</li>
+                                        <li><span>Hızlı Erişim Menüsü:</span> Sağ tık ile hızlı ayarlara, yardım sayfasına veya veritabanı klasörüne erişim.</li>
+                                        <li><span>Kolay Kapatma:</span> Tek tıkla uygulamayı askıya alma veya sonlandırma seçeneği.</li>
+                                    </ul>
+                                </div>
+                                <div class="gallery-image-panel glass-panel">
+                                    <div class="tray-menu-mockup">
+                                        <div class="tray-header">
+                                            <span class="tray-logo">QN</span>
+                                            <span>QuickNoteApp v1.0.0</span>
+                                        </div>
+                                        <div class="tray-menu-items">
+                                            <div class="tray-item"><span>Not Giriş Ekranını Aç</span><kbd>Ctrl+Shift+N</kbd></div>
+                                            <div class="tray-item"><span>Günlük İnceleme Ekranı</span><kbd>Ctrl+Shift+R</kbd></div>
+                                            <div class="tray-divider"></div>
+                                            <div class="tray-item"><span>Veritabanı Klasörünü Aç</span></div>
+                                            <div class="tray-item"><span>Ayarlar &amp; Bildirim İzinleri</span></div>
+                                            <div class="tray-divider"></div>
+                                            <div class="tray-item quit"><span>Uygulamadan Çık</span></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Setup & Technical Details (MSIX info) -->
+        <section id="kurulum" class="technical-section">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-subtitle">Kurulum Rehberi</span>
+                    <h2 class="section-title">Tek Tıkla Kur, Hemen Başla</h2>
+                    <p class="section-description">Teknik komutlarla uğraşmadan QuickNoteApp'i Windows'a kurun. Kurulum dosyası eski sürümü kaldırır, sertifikayı ekler ve yeni paketi yükler.</p>
+                </div>
+
+                <div class="install-guide glass-panel">
+                    <div class="install-guide-main">
+                        <span class="badge red-badge">Önerilen kurulum</span>
+                        <h3>QuickNoteApp-Kurulum.zip</h3>
+                        <p>Zip dosyasını indirin, klasöre çıkarın ve sadece <strong>QuickNoteApp-Kur.cmd</strong> dosyasına çift tıklayın.</p>
+                        <a href="https://github.com/kibrit74/QuickNoteApp/releases/latest/download/QuickNoteApp-Kurulum.zip" class="btn btn-red btn-lg">
+                            Kurulum Paketini İndir
+                        </a>
+                    </div>
+                    <div class="install-steps">
+                        <div class="install-step">
+                            <span>1</span>
+                            <div>
+                                <strong>Zip'i indir</strong>
+                                <p>İndirme butonu tek tık kurulum paketini indirir.</p>
+                            </div>
+                        </div>
+                        <div class="install-step">
+                            <span>2</span>
+                            <div>
+                                <strong>QuickNoteApp-Kur.cmd'ye çift tıkla</strong>
+                                <p>Sertifika, eski sürüm kaldırma ve MSIX kurulumu otomatik yapılır.</p>
+                            </div>
+                        </div>
+                        <div class="install-step">
+                            <span>3</span>
+                            <div>
+                                <strong>İzinleri onayla</strong>
+                                <p>İlk açılışta bildirim izni ve Gemini CLI rehberi gösterilir. Onay verince ayarlar hazırlanır.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Final CTA / Download Section -->
+        <section id="indir" class="download-section">
+            <div class="download-bg-glow"></div>
+            <div class="container">
+                <div class="download-box glass-panel">
+                    <h2>Çalışma Hızınızı İkiye Katlayın</h2>
+                    <p>Hemen şimdi tamamen ücretsiz ve açık kaynak kodlu QuickNoteApp'i indirin, notlarınızı Windows üzerinde saniyeler içinde tutmaya başlayın.</p>
+                    
+                    <div class="download-buttons">
+                        <a href="https://github.com/kibrit74/QuickNoteApp/releases/latest/download/QuickNoteApp-Kurulum.zip" class="btn btn-red btn-lg" id="btn-footer-download-main">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                            QuickNoteApp Kurulum Paketini İndir
+                        </a>
+                        <a href="https://github.com/kibrit74/QuickNoteApp" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-lg" id="btn-footer-github">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                            GitHub'da Görüntüle
+                        </a>
+                    </div>
+
+                    <div class="download-meta">
+                        <span>Boyut: ~80 MB</span>
+                        <span>•</span>
+                        <span>Windows 10 / 11 Destekli</span>
+                        <span>•</span>
+                        <span>%100 Açık Kaynak</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <div class="container footer-container">
+            <div class="footer-left">
+                <div class="logo">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="3" y="3" width="18" height="18" rx="5" fill="#D9383A" />
+                        <path d="M7 9H17M7 12H14M7 15H11" stroke="#F5EFE6" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <span>QuickNote<span class="text-accent">App</span></span>
+                </div>
+                <p>Milisaniyeler içinde not alma ve bildirim takip uygulaması. Her şey yerel, her şey sizin kontrolünüzde.</p>
+            </div>
+            
+            <div class="footer-links">
+                <div class="link-group">
+                    <h4>Ürün</h4>
+                    <a href="#ozellikler">Özellikler</a>
+                    <a href="#simulator">Simülatör</a>
+                    <a href="#arayuz">Arayüz Tasarımı</a>
+                </div>
+                <div class="link-group">
+                    <h4>Geliştirici</h4>
+                    <a href="#kurulum">Kurulum Kılavuzu</a>
+                    <a href="https://github.com/kibrit74/QuickNoteApp" target="_blank" rel="noopener noreferrer">Kaynak Kodlar</a>
+                    <a href="#kurulum">MSIX Yapılandırma</a>
+                </div>
+                <div class="link-group">
+                    <h4>Yasal</h4>
+                    <a href="#">Gizlilik Politikası</a>
+                    <a href="#">Kullanım Şartları</a>
+                </div>
+            </div>
+        </div>
+        <div class="container footer-bottom">
+            <p>&copy; 2026 QuickNoteApp. Tüm hakları saklıdır. Renk Teması: Kırmızı, Bej, Füme, Siyah.</p>
+            <p class="designer-tag">Antigravity AI ile Tasarlandı</p>
+        </div>
+    </footer>
+
+    <!-- App JavaScript -->
+    <script src="app.js"></script>
+</body>
+</html>

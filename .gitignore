@@ -1,0 +1,25 @@
+# Build outputs
+bin/
+obj/
+artifacts/
+AppPackages/
+QuickNoteApp/AppPackages/
+QuickNoteApp.Tests/artifacts/
+
+# Visual Studio / .NET
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+TestResults/
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Local logs/temp
+*.log
+*.tmp

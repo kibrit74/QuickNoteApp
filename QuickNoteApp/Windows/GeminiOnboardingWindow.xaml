@@ -1,0 +1,172 @@
+<Window x:Class="QuickNoteApp.Windows.GeminiOnboardingWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Gemini CLI Kurulumu"
+        Width="720"
+        Height="620"
+        MinWidth="660"
+        MinHeight="500"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="CanResize"
+        Background="{DynamicResource BgDeepBrush}">
+    <Border Margin="16"
+            Padding="18"
+            CornerRadius="10"
+            Background="{DynamicResource BgCardBrush}"
+            BorderBrush="{DynamicResource BorderSoftBrush}"
+            BorderThickness="1">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0" Margin="0,0,0,14">
+                <TextBlock Text="Gemini CLI'yi bir kez hazırlayalım"
+                           Foreground="{DynamicResource TextPrimaryBrush}"
+                           FontSize="22"
+                           FontWeight="Bold"
+                           TextWrapping="Wrap" />
+                <TextBlock Text="QuickNoteApp'in AI Analiz, Dikte ve Plan özellikleri bilgisayardaki Gemini CLI ile çalışır. Aşağıdaki adımlar ilk kurulum içindir."
+                           Foreground="{DynamicResource TextSecondaryBrush}"
+                           FontSize="13"
+                           Margin="0,8,0,0"
+                           TextWrapping="Wrap" />
+            </StackPanel>
+
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <Border Background="{DynamicResource SubtleSurfaceBrush}"
+                            BorderBrush="{DynamicResource BorderSoftBrush}"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Padding="12"
+                            Margin="0,0,0,12">
+                        <StackPanel>
+                            <TextBlock Text="1. Kurulum"
+                                       Foreground="{DynamicResource TextPrimaryBrush}"
+                                       FontSize="15"
+                                       FontWeight="Bold" />
+                            <TextBlock Text="En pratik yol: Kurulum Yardımcısını Aç düğmesine bas. Yardımcı önce Node.js ve npm var mı bakar; yoksa Node.js LTS sürümünü winget ile kurmayı dener, sonra Gemini CLI kurulumuna geçer."
+                                       Foreground="{DynamicResource TextSecondaryBrush}"
+                                       FontSize="12.5"
+                                       Margin="0,6,0,10"
+                                       TextWrapping="Wrap" />
+                            <TextBlock Text="Node.js yoksa kullanılacak komut:"
+                                       Foreground="{DynamicResource TextMutedBrush}"
+                                       FontSize="12"
+                                       Margin="0,0,0,6" />
+                            <TextBox Text="winget install --id OpenJS.NodeJS.LTS --source winget"
+                                     IsReadOnly="True"
+                                     FontFamily="Consolas"
+                                     FontSize="13"
+                                     Margin="0,0,0,10" />
+                            <TextBlock Text="Node.js hazır olunca Gemini CLI komutu:"
+                                       Foreground="{DynamicResource TextMutedBrush}"
+                                       FontSize="12"
+                                       Margin="0,0,0,6" />
+                            <TextBox Text="npm install -g @google/gemini-cli@latest"
+                                     IsReadOnly="True"
+                                     FontFamily="Consolas"
+                                     FontSize="13"
+                                     Margin="0,0,0,10" />
+                            <WrapPanel>
+                                <Button Content="Kurulum Yardımcısını Aç"
+                                        MinWidth="150"
+                                        Height="32"
+                                        Style="{StaticResource PrimaryButton}"
+                                        Click="RunInstallerButton_Click" />
+                                <Button Content="Node Komutunu Kopyala"
+                                        MinWidth="150"
+                                        Height="32"
+                                        Margin="8,0,0,0"
+                                        Click="CopyNodeInstallCommandButton_Click" />
+                                <Button Content="Gemini Komutunu Kopyala"
+                                        MinWidth="160"
+                                        Height="32"
+                                        Margin="8,0,0,0"
+                                        Click="CopyInstallCommandButton_Click" />
+                            </WrapPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Background="{DynamicResource SubtleSurfaceBrush}"
+                            BorderBrush="{DynamicResource BorderSoftBrush}"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Padding="12"
+                            Margin="0,0,0,12">
+                        <StackPanel>
+                            <TextBlock Text="2. Google oturumu aç"
+                                       Foreground="{DynamicResource TextPrimaryBrush}"
+                                       FontSize="15"
+                                       FontWeight="Bold" />
+                            <TextBlock Foreground="{DynamicResource TextSecondaryBrush}"
+                                       FontSize="12.5"
+                                       Margin="0,6,0,10"
+                                       TextWrapping="Wrap">
+                                Terminalde <Run FontFamily="Consolas" Text="gemini" /> yaz. Açılan ekranda <Run FontWeight="SemiBold" Text="Sign in with Google" /> seçeneğini seç. Tarayıcıda Google hesabına giriş yap, sonra terminale geri dön.
+                            </TextBlock>
+                            <TextBox Text="gemini"
+                                     IsReadOnly="True"
+                                     FontFamily="Consolas"
+                                     FontSize="13"
+                                     Margin="0,0,0,10" />
+                            <Button Content="Oturum Komutunu Kopyala"
+                                    MinWidth="150"
+                                    Height="32"
+                                    HorizontalAlignment="Left"
+                                    Click="CopyLoginCommandButton_Click" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Background="{DynamicResource SubtleSurfaceBrush}"
+                            BorderBrush="{DynamicResource BorderSoftBrush}"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Padding="12">
+                        <StackPanel>
+                            <TextBlock Text="3. QuickNoteApp içinde kullan"
+                                       Foreground="{DynamicResource TextPrimaryBrush}"
+                                       FontSize="15"
+                                       FontWeight="Bold" />
+                            <TextBlock Text="Kurulum ve oturum tamamlanınca not ekranında AI Analiz'e basabilirsin. Sesle yazdırmak için Dikte, günlük görev planı için Plan düğmesini kullan."
+                                       Foreground="{DynamicResource TextSecondaryBrush}"
+                                       FontSize="12.5"
+                                       Margin="0,6,0,10"
+                                       TextWrapping="Wrap" />
+                            <TextBlock x:Name="GeminiStatusText"
+                                       Text="Gemini CLI durumu kontrol edilmedi."
+                                       Foreground="{DynamicResource TextMutedBrush}"
+                                       FontSize="12.5"
+                                       FontWeight="SemiBold"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+
+            <DockPanel Grid.Row="2" Margin="0,16,0,0" LastChildFill="False">
+                <TextBlock x:Name="CopyStatusText"
+                           DockPanel.Dock="Left"
+                           Foreground="{DynamicResource TextMutedBrush}"
+                           FontSize="12"
+                           VerticalAlignment="Center"
+                           TextWrapping="Wrap" />
+                <Button DockPanel.Dock="Right"
+                        Content="Tamam, Bir Daha Gösterme"
+                        MinWidth="170"
+                        Height="34"
+                        Style="{StaticResource PrimaryButton}"
+                        Click="CloseAndRememberButton_Click" />
+                <Button DockPanel.Dock="Right"
+                        Content="Kapat"
+                        MinWidth="90"
+                        Height="34"
+                        Margin="0,0,8,0"
+                        Click="CloseButton_Click" />
+            </DockPanel>
+        </Grid>
+    </Border>
+</Window>

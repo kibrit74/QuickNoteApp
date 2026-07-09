@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickNote - Premium Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #030712;
+            color: #f3f4f6;
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background-color: #0b0f19;
+            border-right: 1px solid #1f2937;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+
+        .logo-icon {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, #a855f7, #6366f1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 20px;
+            box-shadow: 0 4px 14px rgba(168, 85, 247, 0.4);
+        }
+
+        .logo-text {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(to right, #ffffff, #9ca3af);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .menu-items {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            color: #9ca3af;
+            font-size: 14.5px;
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .menu-item:hover, .menu-item.active {
+            background-color: rgba(168, 85, 247, 0.1);
+            color: #c084fc;
+        }
+
+        .menu-item .icon { font-size: 16px; }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-top: 20px;
+            border-top: 1px solid #1f2937;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .user-info .name { font-size: 14px; font-weight: 600; color: #f3f4f6; }
+        .user-info .role { font-size: 11px; color: #6b7280; }
+
+        /* Main Dashboard Content */
+        .main-content {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            font-size: 14px;
+            color: #9ca3af;
+            margin-top: 4px;
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 16px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #a855f7, #6366f1);
+            color: white;
+            box-shadow: 0 4px 20px rgba(168, 85, 247, 0.25);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 6px 24px rgba(168, 85, 247, 0.4);
+            transform: translateY(-1px);
+        }
+
+        /* Dashboard Grid Layout */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 32px;
+        }
+
+        .left-column {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        /* Widgets & Cards */
+        .card {
+            background-color: #0b0f19;
+            border: 1px solid #1f2937;
+            border-radius: 20px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .see-all {
+            font-size: 12px;
+            color: #c084fc;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* Recent Notes Grid */
+        .recent-notes-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .note-card {
+            background-color: #111827;
+            border: 1px solid #374151;
+            border-radius: 16px;
+            padding: 18px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 140px;
+        }
+
+        .note-card:hover {
+            border-color: #a855f7;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(168, 85, 247, 0.15);
+        }
+
+        .note-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #f3f4f6;
+            margin-bottom: 6px;
+        }
+
+        .note-body {
+            font-size: 12px;
+            color: #9ca3af;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .note-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+            font-size: 11px;
+            color: #6b7280;
+        }
+
+        .tag-pill {
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 10px;
+        }
+
+        .tag-work { background-color: rgba(168, 85, 247, 0.15); color: #c084fc; }
+        .tag-personal { background-color: rgba(99, 102, 241, 0.15); color: #818cf8; }
+
+        /* Gemini AI Assistant Box */
+        .ai-assistant-card {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(99, 102, 241, 0.1));
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 20px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ai-assistant-card::before {
+            content: '';
+            position: absolute;
+            top: 0; right: 0;
+            width: 150px; height: 150px;
+            background: radial-gradient(circle, rgba(168,85,247,0.2) 0%, transparent 70%);
+            z-index: 0;
+        }
+
+        .ai-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1;
+        }
+
+        .ai-icon {
+            font-size: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .ai-title { font-size: 16px; font-weight: 700; color: #c084fc; }
+
+        .ai-input-wrapper {
+            display: flex;
+            align-items: center;
+            background-color: rgba(3, 7, 18, 0.6);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            border-radius: 12px;
+            padding: 10px 16px;
+            gap: 12px;
+            z-index: 1;
+        }
+
+        .ai-input-wrapper input {
+            background: none;
+            border: none;
+            outline: none;
+            color: white;
+            font-size: 13.5px;
+            flex: 1;
+            font-family: inherit;
+        }
+
+        .ai-input-wrapper input::placeholder { color: #6b7280; }
+
+        .ai-send-btn {
+            background: none;
+            border: none;
+            color: #c084fc;
+            cursor: pointer;
+            font-size: 16px;
+            transition: transform 0.2s;
+        }
+
+        .ai-send-btn:hover { transform: scale(1.1); }
+
+        .ai-suggestions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            z-index: 1;
+        }
+
+        .ai-suggest-pill {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            cursor: pointer;
+            color: #d1d5db;
+            transition: all 0.2s;
+        }
+
+        .ai-suggest-pill:hover {
+            border-color: #a855f7;
+            color: #c084fc;
+            background-color: rgba(168, 85, 247, 0.05);
+        }
+
+        /* Right Column (Widgets) */
+        .right-column {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        /* Calendar Widget */
+        .calendar-card {
+            background-color: #0b0f19;
+            border: 1px solid #1f2937;
+            border-radius: 20px;
+            padding: 24px;
+        }
+
+        .cal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .cal-title { font-size: 14.5px; font-weight: 700; }
+        .cal-nav { display: flex; gap: 8px; font-size: 12px; color: #9ca3af; cursor: pointer; }
+
+        .cal-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .cal-day-label { font-size: 10px; color: #6b7280; font-weight: 600; margin-bottom: 8px; }
+        .cal-num {
+            font-size: 12px;
+            padding: 6px 0;
+            border-radius: 8px;
+            color: #9ca3af;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .cal-num:hover { background-color: rgba(168, 85, 247, 0.1); color: #c084fc; }
+        .cal-num.today {
+            background: linear-gradient(135deg, #a855f7, #6366f1);
+            color: white;
+            font-weight: 600;
+        }
+
+        .event-list { display: flex; flex-direction: column; gap: 10px; }
+        .event-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            background-color: #111827;
+            border-left: 3px solid #a855f7;
+            border-radius: 8px;
+        }
+        .event-time { font-size: 11px; color: #9ca3af; font-weight: 600; }
+        .event-desc { font-size: 12px; font-weight: 500; }
+
+        /* Notification & Reminders Panel */
+        .reminders-card {
+            background-color: #0b0f19;
+            border: 1px solid #1f2937;
+            border-radius: 20px;
+            padding: 24px;
+        }
+
+        .reminder-list { display: flex; flex-direction: column; gap: 12px; }
+        .reminder-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #1f2937;
+        }
+        .reminder-item:last-child { border: none; padding: 0; }
+        .rem-checkbox {
+            width: 18px;
+            height: 18px;
+            border-radius: 5px;
+            border: 1px solid #374151;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 10px;
+            color: transparent;
+        }
+        .reminder-item.completed .rem-checkbox {
+            background-color: #10b981;
+            border-color: #10b981;
+            color: white;
+        }
+        .reminder-item.completed .rem-text {
+            text-decoration: line-through;
+            color: #6b7280;
+        }
+        .rem-text { font-size: 13px; font-weight: 500; }
+        .rem-date { font-size: 10px; color: #6b7280; margin-top: 2px; }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div>
+            <div class="logo-section">
+                <div class="logo-icon">Q</div>
+                <div class="logo-text">QuickNote</div>
+            </div>
+            
+            <div class="menu-items">
+                <div class="menu-item active">
+                    <span class="icon">📊</span> Panelim
+                </div>
+                <div class="menu-item">
+                    <span class="icon">📝</span> Tüm Notlar
+                </div>
+                <div class="menu-item">
+                    <span class="icon">📅</span> Takvim
+                </div>
+                <div class="menu-item">
+                    <span class="icon">🔔</span> Bildirimler
+                </div>
+                <div class="menu-item">
+                    <span class="icon">⚙️</span> Ayarlar
+                </div>
+            </div>
+        </div>
+
+        <div class="user-profile">
+            <div class="avatar">O</div>
+            <div class="user-info">
+                <div class="name">Obuzhukuk</div>
+                <div class="role">Premium Kullanıcı</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header">
+            <div>
+                <h1>Merhaba, Obuzhukuk</h1>
+                <p>İşte bugün öne çıkan notların ve yaklaşan etkinliklerin.</p>
+            </div>
+            <div class="quick-actions">
+                <button class="btn btn-primary">➕ Yeni Not Ekle</button>
+            </div>
+        </div>
+
+        <!-- AI Assistant Banner -->
+        <div class="ai-assistant-card">
+            <div class="ai-header">
+                <span class="ai-icon">✨</span>
+                <span class="ai-title">Gemini Yapay Zeka Asistanı</span>
+            </div>
+            <div class="ai-input-wrapper">
+                <input type="text" placeholder="Notlarımdan 'haziran masrafları' raporunu çıkar veya haftalık özet oluştur...">
+                <button class="ai-send-btn">➔</button>
+            </div>
+            <div class="ai-suggestions">
+                <div class="ai-suggest-pill">💡 Alacak Yönetimi notumu özetle</div>
+                <div class="ai-suggest-pill">📅 Bugünü özetle</div>
+                <div class="ai-suggest-pill">📋 Bugün için görev listesi çıkar</div>
+            </div>
+        </div>
+
+        <!-- Grid Layout -->
+        <div class="dashboard-grid">
+            <!-- Left Column -->
+            <div class="left-column">
+                <!-- Recent Notes Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">📝 Son Düzenlenen Notlar</div>
+                        <a href="#" class="see-all">Tümünü Gör</a>
+                    </div>
+                    <div class="recent-notes-grid">
+                        <div class="note-card">
+                            <div>
+                                <div class="note-title">Proje Toplantı Notları</div>
+                                <div class="note-body">Sprint planlama toplantısında öne çıkan maddeler ve gelecek hafta için hedefler belirlendi. API entegrasyonu tamamlandı.</div>
+                            </div>
+                            <div class="note-footer">
+                                <span>10:30</span>
+                                <span class="tag-pill tag-work">#iş</span>
+                            </div>
+                        </div>
+
+                        <div class="note-card">
+                            <div>
+                                <div class="note-title">Alacak Yönetimi - Haziran</div>
+                                <div class="note-body">Haziran ayına ilişkin masraflar iptal edilmiştir. İptal sebebi hakkında henüz tarafımıza bir dönüş yapılmamıştır.</div>
+                            </div>
+                            <div class="note-footer">
+                                <span>Dün, 14:22</span>
+                                <span class="tag-pill tag-work">#iş</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Daily Summary & Task Widget -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">📋 Bugünün Odak Noktaları</div>
+                    </div>
+                    <div class="reminder-list">
+                        <div class="reminder-item">
+                            <div class="rem-checkbox">✓</div>
+                            <div>
+                                <div class="rem-text">API entegrasyonu testlerini bitir</div>
+                                <div class="rem-date">Bugün, 14:00</div>
+                            </div>
+                        </div>
+                        <div class="reminder-item">
+                            <div class="rem-checkbox">✓</div>
+                            <div>
+                                <div class="rem-text">Müşteri memnuniyet anketini tasarla</div>
+                                <div class="rem-date">Yarın, 11:30</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="right-column">
+                <!-- Mini Calendar -->
+                <div class="calendar-card">
+                    <div class="cal-header">
+                        <span class="cal-title">📅 Temmuz 2026</span>
+                        <div class="cal-nav">◀ Bugün ▶</div>
+                    </div>
+                    <div class="cal-grid">
+                        <div class="cal-day-label">Pt</div><div class="cal-day-label">Sa</div><div class="cal-day-label">Ça</div><div class="cal-day-label">Pe</div><div class="cal-day-label">Cu</div><div class="cal-day-label">Ct</div><div class="cal-day-label">Pz</div>
+                        <div class="cal-num">30</div><div class="cal-num">1</div><div class="cal-num">2</div><div class="cal-num">3</div><div class="cal-num">4</div><div class="cal-num">5</div><div class="cal-num today">6</div>
+                        <div class="cal-num">7</div><div class="cal-num">8</div><div class="cal-num">9</div><div class="cal-num">10</div><div class="cal-num">11</div><div class="cal-num">12</div><div class="cal-num">13</div>
+                    </div>
+                    <div class="event-list">
+                        <div class="event-item">
+                            <div class="event-time">10:30</div>
+                            <div class="event-desc">Haftalık Sprint Toplantısı</div>
+                        </div>
+                        <div class="event-item">
+                            <div class="event-time">15:00</div>
+                            <div class="event-desc">Proje Değerlendirme</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reminders & Notifications -->
+                <div class="reminders-card">
+                    <div class="card-header" style="margin-bottom: 20px;">
+                        <div class="card-title">⏰ Hatırlatıcılar</div>
+                    </div>
+                    <div class="reminder-list">
+                        <div class="reminder-item completed">
+                            <div class="rem-checkbox">✓</div>
+                            <div>
+                                <div class="rem-text">E-ticaret lansman sunumunu yap</div>
+                                <div class="rem-date">Tamamlandı</div>
+                            </div>
+                        </div>
+                        <div class="reminder-item">
+                            <div class="rem-checkbox">✓</div>
+                            <div>
+                                <div class="rem-text">Rapor çıktısını amire gönder</div>
+                                <div class="rem-date">8 Temmuz, 12:00</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
