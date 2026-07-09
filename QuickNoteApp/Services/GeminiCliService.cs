@@ -100,8 +100,8 @@ public class GeminiCliService
         var model = string.IsNullOrWhiteSpace(modelName) ? DefaultModelName : modelName;
 
         return command.Equals("gemini", StringComparison.OrdinalIgnoreCase)
-            ? $"gemini -m {model}"
-            : $"call \"{command}\" -m {model}";
+            ? $"gemini -y -m {model}"
+            : $"call \"{command}\" -y -m {model}";
     }
 
     public static bool IsGeminiCliAvailable()
