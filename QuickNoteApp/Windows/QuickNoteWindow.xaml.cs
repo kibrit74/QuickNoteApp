@@ -84,6 +84,41 @@ public partial class QuickNoteWindow : Window
         UpdateCalendarStatusUI();
 
         Loaded += (s, e) => GeminiOnboardingWindow.ShowFirstRunIfNeeded(this);
+        System.Windows.DataObject.AddPastingHandler(NoteInput, NoteInput_Pasting);
+    }
+
+    private void NoteInput_Pasting(object sender, DataObjectPastingEventArgs e)
+    {
+        if (e.DataObject.GetDataPresent(System.Windows.DataFormats.UnicodeText))
+        {
+            try
+            {
+                var text = (string)e.DataObject.GetData(System.Windows.DataFormats.UnicodeText);
+                var dataObject = new System.Windows.DataObject();
+                dataObject.SetText(text, System.Windows.TextDataFormat.UnicodeText);
+                e.DataObject = dataObject;
+            }
+            catch
+            {
+            }
+        }
+        else if (e.DataObject.GetDataPresent(System.Windows.DataFormats.Text))
+        {
+            try
+            {
+                var text = (string)e.DataObject.GetData(System.Windows.DataFormats.Text);
+                var dataObject = new System.Windows.DataObject();
+                dataObject.SetText(text, System.Windows.TextDataFormat.Text);
+                e.DataObject = dataObject;
+            }
+            catch
+            {
+            }
+        }
+        else
+        {
+            e.CancelCommand();
+        }
     }
 
     private void OpenGeminiOnboardingButton_Click(object sender, RoutedEventArgs e)
