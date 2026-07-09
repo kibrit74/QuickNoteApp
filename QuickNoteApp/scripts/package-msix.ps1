@@ -66,7 +66,11 @@ try {
 
     if (Test-Path `$certPath) {
         Write-Host "Sertifika guvenilir kullanicilar alanina ekleniyor..."
-        Import-Certificate -FilePath `$certPath -CertStoreLocation "Cert:\CurrentUser\TrustedPeople" | Out-Null
+        try {
+            Import-Certificate -FilePath `$certPath -CertStoreLocation "Cert:\LocalMachine\TrustedPeople" | Out-Null
+        } catch {
+            Import-Certificate -FilePath `$certPath -CertStoreLocation "Cert:\CurrentUser\TrustedPeople" | Out-Null
+        }
     }
 
     Write-Host "Eski QuickNoteApp kurulumu varsa kaldiriliyor..."
@@ -167,7 +171,11 @@ if (-not $cert) {
 }
 
 Export-Certificate -Cert $cert -FilePath $CertPath | Out-Null
-Import-Certificate -FilePath $CertPath -CertStoreLocation "Cert:\CurrentUser\TrustedPeople" | Out-Null
+try {
+    Import-Certificate -FilePath $CertPath -CertStoreLocation "Cert:\LocalMachine\TrustedPeople" | Out-Null
+} catch {
+    Import-Certificate -FilePath $CertPath -CertStoreLocation "Cert:\CurrentUser\TrustedPeople" | Out-Null
+}
 
 Write-Host "MSIX imzalanıyor..."
 & $signtool sign /fd SHA256 /sha1 $cert.Thumbprint $PackagePath
