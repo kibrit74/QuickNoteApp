@@ -64,7 +64,9 @@ public static class GeminiSearchIntent
         "günlük plan",
         "gunluk plan",
         "planı",
-        "plani"
+        "plani",
+        "plan yap",
+        "planla"
     ];
 
     public static bool ShouldUseDatabase(string prompt)
@@ -84,6 +86,46 @@ public static class GeminiSearchIntent
         }
 
         return DatabaseKeywords.Any(keyword => prompt.Contains(keyword, StringComparison.OrdinalIgnoreCase));
+    }
+
+    public static bool ShouldUseSmartSearch(string prompt)
+    {
+        if (string.IsNullOrWhiteSpace(prompt))
+            return false;
+
+        var trimmed = prompt.Trim();
+        var words = trimmed.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        if (words.Length < 2 || trimmed.Length < 8)
+            return false;
+
+        if (trimmed.Contains('?'))
+            return true;
+
+        var naturalSearchPhrases = new[]
+        {
+            "gecen hafta",
+            "geçen hafta",
+            "bu hafta",
+            "temmuzdaki",
+            "son gonderilen",
+            "son gönderilen",
+            "acik is",
+            "açık iş",
+            "ne demis",
+            "ne demiş",
+            "neler",
+            "hangi",
+            "kac",
+            "kaç"
+        };
+
+        if (naturalSearchPhrases.Any(phrase => trimmed.Contains(phrase, StringComparison.OrdinalIgnoreCase)))
+            return true;
+
+        var longExplicitSearch = words.Length >= 3 &&
+            ExplicitDatabaseKeywords.Any(keyword => trimmed.Contains(keyword, StringComparison.OrdinalIgnoreCase));
+
+        return longExplicitSearch || ShouldUseCalendar(trimmed);
     }
 
     public static bool ShouldUseCalendar(string prompt)

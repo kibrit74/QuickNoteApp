@@ -18,6 +18,7 @@ public partial class QuickNoteWindow : Window
     private readonly GoogleAuthService _googleAuth;
     private readonly CalendarPollingService _calendarPolling;
     private readonly NotificationListenerService _notificationListener;
+    private readonly TelegramBotService? _telegramBot;
     private const string DefaultGeminiInstruction = "Notu özetle. Görsel varsa görseldeki metinleri çıkar. Varsa yapılacak işleri madde madde yaz.";
     private string? _selectedImagePath;
     private readonly List<string> _selectedFilePaths = new();
@@ -54,13 +55,14 @@ public partial class QuickNoteWindow : Window
 
     public DateTime? SelectedNoteDate => _selectedNoteDate;
 
-    public QuickNoteWindow(DatabaseService db, GoogleAuthService googleAuth, CalendarPollingService calendarPolling, NotificationListenerService notificationListener)
+    public QuickNoteWindow(DatabaseService db, GoogleAuthService googleAuth, CalendarPollingService calendarPolling, NotificationListenerService notificationListener, TelegramBotService? telegramBot = null)
     {
         InitializeComponent();
         _db = db;
         _googleAuth = googleAuth;
         _calendarPolling = calendarPolling;
         _notificationListener = notificationListener;
+        _telegramBot = telegramBot;
 
         _autoSaveTimer = new System.Windows.Threading.DispatcherTimer
         {
@@ -83,8 +85,27 @@ public partial class QuickNoteWindow : Window
         _calendarPolling.StatusChanged += () => Dispatcher.Invoke(UpdateCalendarStatusUI);
         UpdateCalendarStatusUI();
 
-        Loaded += (s, e) => GeminiOnboardingWindow.ShowFirstRunIfNeeded(this);
+        if (_telegramBot != null)
+        {
+            _telegramBot.StatusChanged += (status) => Dispatcher.Invoke(() => UpdateTelegramStatusUI(status));
+            _telegramBot.ChatIdDiscovered += (chatId, username) => Dispatcher.Invoke(() => OnTelegramChatIdDiscovered(chatId, username));
+        }
+
+        Loaded += (s, e) =>
+        {
+            GeminiOnboardingWindow.ShowFirstRunIfNeeded(this);
+            LoadTelegramSettingsUI();
+        };
         System.Windows.DataObject.AddPastingHandler(NoteInput, NoteInput_Pasting);
+
+        _audioRecorder.SilenceDetected += (s, e) => Dispatcher.Invoke(() => {
+            if (_isDictating) DictateButton_Click(this, new RoutedEventArgs());
+        });
+        _audioRecorder.AudioVolumeChanged += (s, vol) => Dispatcher.Invoke(() => {
+            if (_isDictating) {
+                AudioVolumeBar.Value = vol;
+            }
+        });
     }
 
     private void NoteInput_Pasting(object sender, DataObjectPastingEventArgs e)
@@ -153,12 +174,12 @@ public partial class QuickNoteWindow : Window
 
         if (GeminiCliService.IsGeminiCliAvailable())
         {
-            GeminiCliStatusText.Text = "Gemini CLI bulundu. Google oturumu açıldıysa kullanıma hazır.";
+            GeminiCliStatusText.Text = "Antigravity CLI (agy) bulundu. Google oturumu açıldıysa kullanıma hazır.";
             GeminiCliStatusDot.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(34, 197, 94));
             return;
         }
 
-        GeminiCliStatusText.Text = "Gemini CLI bulunamadı. Rehberi açıp kurulumu tamamlayın.";
+        GeminiCliStatusText.Text = "Antigravity CLI (agy) bulunamadı. Rehberi açıp kurulumu tamamlayın.";
         GeminiCliStatusDot.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(239, 68, 68));
     }
     public void FocusInput()
@@ -1005,7 +1026,7 @@ public partial class QuickNoteWindow : Window
         });
     }
 
-    private void RefreshNotes()
+    public void RefreshNotes()
     {
         if (_isDailySummaryMode)
         {
@@ -1917,7 +1938,7 @@ public partial class QuickNoteWindow : Window
             _isDictating = false;
         }
 
-        DictateButton.Content = "Dikte";
+        DictateButtonText.Text = "Dikte";
         Hide();
     }
 
@@ -1941,7 +1962,8 @@ public partial class QuickNoteWindow : Window
                 audioPath = _audioRecorder.Stop();
                 _isDictating = false;
                 DictateButton.IsEnabled = false;
-                DictateButton.Content = "Gemini yazıyor...";
+                DictateButtonText.Text = "Gemini yazıyor...";
+                AudioVolumeBar.Visibility = Visibility.Collapsed;
                 CopilotStatusText.Text = "Ses Gemini Flash ile yazıya çevriliyor...";
 
                 if (string.IsNullOrWhiteSpace(audioPath) || !File.Exists(audioPath))
@@ -1973,7 +1995,7 @@ public partial class QuickNoteWindow : Window
             {
                 _audioRecorder.DiscardCurrentRecording();
                 DictateButton.IsEnabled = true;
-                DictateButton.Content = "Dikte";
+                DictateButtonText.Text = "Dikte";
             }
 
             return;
@@ -1983,13 +2005,16 @@ public partial class QuickNoteWindow : Window
         {
             _audioRecorder.Start();
             _isDictating = true;
-            DictateButton.Content = "\u25CF Durdur";
+            DictateButtonText.Text = "● Durdur";
+            AudioVolumeBar.Visibility = Visibility.Visible;
+            AudioVolumeBar.Value = 0;
             CopilotStatusText.Text = "Ses kaydediliyor...";
         }
         catch (Exception ex)
         {
             _isDictating = false;
-            DictateButton.Content = "Dikte";
+            DictateButtonText.Text = "Dikte";
+            AudioVolumeBar.Visibility = Visibility.Collapsed;
             CopilotStatusText.Text = $"Mikrofon başlatılamadı: {ex.Message}";
             System.Windows.MessageBox.Show(
                 $"Mikrofon başlatılamadı:\n{ex.Message}\n\nWindows Ayarları > Gizlilik > Mikrofon bölümünden uygulamanın mikrofon erişimine izin verin.",
@@ -2784,9 +2809,16 @@ public partial class QuickNoteWindow : Window
         }
         else if (viewName == "Settings")
         {
-            UpdateNotificationStatusUI();
-            UpdateCalendarStatusUI();
+            LoadSettingsUI();
         }
+    }
+
+    public void OpenSettingsView()
+    {
+        AyarlarRadio.IsChecked = true;
+        Show();
+        WindowState = WindowState.Normal;
+        Activate();
     }
 
     // Dashboard data population
@@ -3422,6 +3454,297 @@ public partial class QuickNoteWindow : Window
         _isDailySummaryMode = false;
         DailySummaryPanel.Visibility = Visibility.Collapsed;
         RefreshNotes();
+    }
+
+    private void LoadTelegramSettingsUI()
+    {
+        try
+        {
+            if (_telegramBot == null) return;
+            TelegramTokenInput.Password = _telegramBot.Token;
+            TelegramChatIdInput.Text = _telegramBot.ChatId > 0 ? _telegramBot.ChatId.ToString() : "";
+            UpdateTelegramStatusUI(_telegramBot.IsRunning ? "Çalışıyor" : "Durduruldu");
+        }
+        catch {}
+    }
+
+    private void UpdateTelegramStatusUI(string status)
+    {
+        if (TelegramStatusText == null || TelegramStatusDot == null) return;
+        TelegramStatusText.Text = status;
+        if (status.Contains("çalışıyor", StringComparison.OrdinalIgnoreCase) || status.Contains("aktif", StringComparison.OrdinalIgnoreCase))
+        {
+            TelegramStatusDot.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(34, 197, 94)); // Green
+        }
+        else if (status.Contains("hata", StringComparison.OrdinalIgnoreCase))
+        {
+            TelegramStatusDot.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(239, 68, 68)); // Red
+        }
+        else
+        {
+            TelegramStatusDot.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(119, 129, 150)); // Muted Gray
+        }
+    }
+
+    private void OnTelegramChatIdDiscovered(long chatId, string username)
+    {
+        TelegramChatIdInput.Text = chatId.ToString();
+        System.Windows.MessageBox.Show(this, $"Chat ID Otomatik Algılandı: {chatId}\nKullanıcı: @{username}", "Telegram Chat ID Keşfedildi", MessageBoxButton.OK, MessageBoxImage.Information);
+    }
+
+    private void TelegramSaveBtn_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            if (_telegramBot == null) return;
+            var token = TelegramTokenInput.Password.Trim();
+            var chatIdStr = TelegramChatIdInput.Text.Trim();
+
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                System.Windows.MessageBox.Show(this, "Lütfen geçerli bir Bot Token girin.", "Hata", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            long.TryParse(chatIdStr, out long chatId);
+            _telegramBot.SaveSettings(token, chatId, enabled: true);
+            UpdateTelegramStatusUI(_telegramBot.IsRunning ? "Çalışıyor" : "Durduruldu");
+            System.Windows.MessageBox.Show(this, "Telegram Bot ayarları kaydedildi ve servis başlatıldı.", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+        catch (Exception ex)
+        {
+            UpdateTelegramStatusUI("Hata oluştu");
+            System.Windows.MessageBox.Show(this, $"Servis başlatılamadı: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    private void TelegramStopBtn_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            if (_telegramBot == null) return;
+            _telegramBot.SaveSettings(_telegramBot.Token, _telegramBot.ChatId, enabled: false);
+            UpdateTelegramStatusUI("Durduruldu");
+            System.Windows.MessageBox.Show(this, "Telegram Bot servisi durduruldu.", "Bilgi", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+        catch (Exception ex)
+        {
+            System.Windows.MessageBox.Show(this, $"Servis durdurulamadı: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    private void TelegramLearnChatIdBtn_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            if (_telegramBot == null) return;
+            var token = TelegramTokenInput.Password.Trim();
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                System.Windows.MessageBox.Show(this, "Chat ID keşfetmeden önce lütfen Bot Token değerini girin.", "Hata", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            _telegramBot.SaveSettings(token, 0, enabled: true);
+            System.Windows.MessageBox.Show(this, "Keşif modu aktif! Lütfen Telegram'da botunuzu açıp /start yazın.\nUygulama Chat ID değerinizi otomatik yakalayacaktır.", "Chat ID Keşfet", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+        catch (Exception ex)
+        {
+            System.Windows.MessageBox.Show(this, $"Keşif başlatılamadı: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    private bool _isUpdatingSettingsUI;
+
+    private void LoadSettingsUI()
+    {
+        _isUpdatingSettingsUI = true;
+        try
+        {
+            UpdateNotificationStatusUI();
+            UpdateCalendarStatusUI();
+            LoadTelegramSettingsUI();
+
+            // 1. Notification Filters
+            FilterOutlookCheckBox.IsChecked = NotificationFilter.EnabledAppNames.Contains("Outlook");
+            FilterWhatsAppCheckBox.IsChecked = NotificationFilter.EnabledAppNames.Contains("WhatsApp");
+            FilterTeamsCheckBox.IsChecked = NotificationFilter.EnabledAppNames.Contains("Teams");
+            FilterSlackCheckBox.IsChecked = NotificationFilter.EnabledAppNames.Contains("Slack");
+            FilterTelegramCheckBox.IsChecked = NotificationFilter.EnabledAppNames.Contains("Telegram");
+            FilterGmailCheckBox.IsChecked = NotificationFilter.EnabledAppNames.Contains("Gmail");
+
+            // 2. Dictation Refiner
+            var dictationMeta = _db.GetMeta("EnableDictationRefiner");
+            EnableDictationRefinerCheckBox.IsChecked = string.IsNullOrWhiteSpace(dictationMeta) || dictationMeta.Equals("true", StringComparison.OrdinalIgnoreCase);
+
+            // 3. Auto Backup
+            BackupDirInput.Text = AutoBackupService.GetBackupDirectory(_db);
+            BackupRetentionInput.Text = AutoBackupService.GetRetentionCount(_db).ToString();
+            var latestBackup = AutoBackupService.GetLatestBackupPath(_db);
+            LastBackupPathText.Text = string.IsNullOrWhiteSpace(latestBackup) ? "Henüz yedek alınmadı" : latestBackup;
+
+            // 4. Data Management Info
+            DatabasePathText.Text = _db.DatabasePath;
+            if (File.Exists(_db.DatabasePath))
+            {
+                var fileInfo = new FileInfo(_db.DatabasePath);
+                double mb = fileInfo.Length / (1024.0 * 1024.0);
+                DatabaseSizeText.Text = $"{mb:F2} MB ({fileInfo.Length:N0} bytes)";
+            }
+            else
+            {
+                DatabaseSizeText.Text = "Bulunamadı";
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"LoadSettingsUI hatası: {ex}");
+        }
+        finally
+        {
+            _isUpdatingSettingsUI = false;
+        }
+    }
+
+    private void NotificationFilterCheckBox_Changed(object sender, RoutedEventArgs e)
+    {
+        if (_isUpdatingSettingsUI) return;
+
+        var enabledApps = new List<string>();
+        if (FilterOutlookCheckBox.IsChecked == true) enabledApps.Add("Outlook");
+        if (FilterWhatsAppCheckBox.IsChecked == true) enabledApps.Add("WhatsApp");
+        if (FilterTeamsCheckBox.IsChecked == true) enabledApps.Add("Teams");
+        if (FilterSlackCheckBox.IsChecked == true) enabledApps.Add("Slack");
+        if (FilterTelegramCheckBox.IsChecked == true) enabledApps.Add("Telegram");
+        if (FilterGmailCheckBox.IsChecked == true) enabledApps.Add("Gmail");
+
+        var csv = string.Join(",", enabledApps);
+        _db.SetMeta("EnabledNotificationApps", csv);
+        NotificationFilter.Initialize(_db);
+    }
+
+    private void EnableDictationRefinerCheckBox_Changed(object sender, RoutedEventArgs e)
+    {
+        if (_isUpdatingSettingsUI) return;
+        var isChecked = EnableDictationRefinerCheckBox.IsChecked == true;
+        _db.SetMeta("EnableDictationRefiner", isChecked ? "true" : "false");
+    }
+
+    private void BackupBrowseBtn_Click(object sender, RoutedEventArgs e)
+    {
+        using var dialog = new System.Windows.Forms.FolderBrowserDialog
+        {
+            Description = "Otomatik yedeklerin saklanacağı klasörü seçin",
+            UseDescriptionForTitle = true,
+            SelectedPath = BackupDirInput.Text
+        };
+
+        if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+        {
+            BackupDirInput.Text = dialog.SelectedPath;
+        }
+    }
+
+    private void SaveBackupSettingsBtn_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var dir = BackupDirInput.Text.Trim();
+            if (string.IsNullOrWhiteSpace(dir))
+            {
+                System.Windows.MessageBox.Show(this, "Lütfen geçerli bir yedek klasörü girin.", "Hata", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (!int.TryParse(BackupRetentionInput.Text.Trim(), out int retention) || retention < 1)
+            {
+                System.Windows.MessageBox.Show(this, "Saklama sayısı en az 1 olmalıdır.", "Hata", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            AutoBackupService.SetBackupDirectory(_db, dir);
+            AutoBackupService.SetRetentionCount(_db, retention);
+
+            System.Windows.MessageBox.Show(this, "Otomatik yedekleme ayarları kaydedildi.", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+        catch (Exception ex)
+        {
+            System.Windows.MessageBox.Show(this, $"Ayarlar kaydedilemedi: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    private void BackupNowBtn_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var dir = AutoBackupService.GetBackupDirectory(_db);
+            Directory.CreateDirectory(dir);
+
+            var backupPath = Path.Combine(dir, $"QuickNoteApp-manual-{DateTime.Now:yyyyMMdd-HHmmss}.db");
+            _db.BackupDatabase(backupPath);
+            AutoBackupService.SetRetentionCount(_db, AutoBackupService.GetRetentionCount(_db));
+
+            LastBackupPathText.Text = backupPath;
+            System.Windows.MessageBox.Show(this, $"Yedek başarıyla oluşturuldu:\n{backupPath}", "Yedek Alındı", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+        catch (Exception ex)
+        {
+            System.Windows.MessageBox.Show(this, $"Yedek alınırken hata oluştu: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    private void OpenBackupFolderBtn_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var dir = AutoBackupService.GetBackupDirectory(_db);
+            if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+            System.Diagnostics.Process.Start("explorer.exe", dir);
+        }
+        catch (Exception ex)
+        {
+            System.Windows.MessageBox.Show(this, $"Klasör açılamadı: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    private void OpenDatabaseFolderBtn_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var dbDir = Path.GetDirectoryName(_db.DatabasePath);
+            if (!string.IsNullOrEmpty(dbDir) && Directory.Exists(dbDir))
+            {
+                System.Diagnostics.Process.Start("explorer.exe", dbDir);
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Windows.MessageBox.Show(this, $"Klasör açılamadı: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    private void ResetDatabaseBtn_Click(object sender, RoutedEventArgs e)
+    {
+        var result = System.Windows.MessageBox.Show(this,
+            "Tüm notlarınız, kayıtlı ayarlarınız ve geçmiş verileriniz kalıcı olarak silinecek!\n\nBu işlemi onaylıyor musunuz?",
+            "Veritabanını Sıfırla (DİKKAT)",
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Warning);
+
+        if (result == MessageBoxResult.Yes)
+        {
+            try
+            {
+                _db.ClearAllData();
+                RefreshNotes();
+                LoadSettingsUI();
+                System.Windows.MessageBox.Show(this, "Tüm veriler başarıyla sıfırlandı.", "Bilgi", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show(this, $"Sıfırlama sırasında hata: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
     }
 }
 

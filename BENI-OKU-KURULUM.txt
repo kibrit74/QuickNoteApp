@@ -1,0 +1,48 @@
+QuickNoteApp Kurulum ve YapÄ±landÄ±rma KÄ±lavuzu
+=============================================
+
+Bu klasÃ¶r, Windows iÃ§in akÄ±llÄ± not alma, bildirim takibi ve Gemini CLI destekli 
+masaÃ¼stÃ¼ uygulamasÄ±nÄ±n kurulumunu iÃ§erir.
+
+---------------------------------------------------------
+ADIM 1: UYGULAMA KURULUMU (Tek TÄ±kla)
+---------------------------------------------------------
+1. KlasÃ¶r iÃ§erisindeki "QuickNoteApp-Kur.cmd" dosyasÄ±na Ã§ift tÄ±klayÄ±n.
+2. KarÅŸÄ±nÄ±za mavi "Windows kiÅŸisel bilgisayarÄ±nÄ±zÄ± korudu" ekranÄ± Ã§Ä±karsa,
+   "Ek Bilgi" yazÄ±sÄ±na ve ardÄ±ndan altta Ã§Ä±kan "Yine de Ã‡alÄ±ÅŸtÄ±r" butonuna basÄ±n.
+3. Kurulum penceresi aÃ§Ä±lacak, geliÅŸtirici sertifikasÄ±nÄ± gÃ¼venli olarak ekleyecek 
+   ve uygulamayÄ± kuracaktÄ±r. Ä°ÅŸlem bitince terminali kapatÄ±n.
+4. BaÅŸlat menÃ¼sÃ¼ne "QuickNoteApp" yazarak uygulamayÄ± aÃ§Ä±n.
+
+---------------------------------------------------------
+ADIM 2: ANTIGRAVITY CLI (AGY) KURULUMU VE GİRİŞ YAPMA (Yapay Zeka Özellikleri İçin)
+---------------------------------------------------------
+QuickNoteApp'in Yapay Zeka Dikte, Özetleme ve Planlama yapabilmesi için:
+1. Uygulama ilk açıldığında ekrana gelen Kurulum Sihirbazı'nda "Antigravity CLI (agy)" 
+   satırının yanındaki "Otomatik Kur" butonuna basın.
+2. Bu işlem bilgisayarınıza Node.js LTS ve Antigravity CLI (agy) paketini kuracaktır.
+3. Kurulum bittikten sonra sihirbazdaki "Giriş Yap" butonuna basın (ya da boş bir
+   komut satırına/terminale "agy" yazıp çalıştırın).
+4. Terminalde yÃ¶n tuÅŸlarÄ± ile "Sign in with Google" seÃ§eneÄŸini seÃ§ip Enter'a basÄ±n.
+5. TarayÄ±cÄ±nÄ±zda aÃ§Ä±lan Google oturum aÃ§ma sayfasÄ±ndan Google hesabÄ±nÄ±za giriÅŸ yapÄ±n
+   ve izinleri onaylayÄ±n. "Authenticated successfully" yazÄ±sÄ±nÄ± gÃ¶rÃ¼nce kapatabilirsiniz.
+6. Kurulum sihirbazÄ±nda "Yeniden Denetle" butonuna basarak yeÅŸile dÃ¶ndÃ¼ÄŸÃ¼nÃ¼ doÄŸrulayÄ±n.
+
+---------------------------------------------------------
+ADIM 3: GOOGLE TAKVÄ°M BAÄLANTISI (Takvim Entegrasyonu Ä°Ã§in)
+---------------------------------------------------------
+NotlarÄ±nÄ±zÄ± takvime eklemek ve gÃ¼n sonu planÄ±nda takvim etkinliklerinizi gÃ¶rmek iÃ§in:
+1. Kurulum SihirbazÄ±'ndaki "Google Takvim" satÄ±rÄ±nÄ±n yanÄ±ndaki "BaÄŸlan" butonuna basÄ±n.
+2. TarayÄ±cÄ±da aÃ§Ä±lan sayfada Google hesabÄ±nÄ±zÄ± seÃ§in, takvim eriÅŸim izinlerini
+   onaylayÄ±n ve "GiriÅŸ baÅŸarÄ±lÄ±" yazÄ±sÄ±nÄ± gÃ¶rÃ¼nce sekmeyi kapatÄ±n.
+3. Sihirbazda durum "BaÄŸlÄ± (eposta@gmail.com)" olarak gÃ¼ncellenecektir.
+
+---------------------------------------------------------
+ADIM 4: SES VE BÄ°LDÄ°RÄ°M Ä°ZÄ°NLERÄ°
+---------------------------------------------------------
+1. Sihirbazdaki "Mikrofon Ä°zni Ver" butonuna basarak Windows ayarlarÄ±ndan mikrofonu aÃ§Ä±n.
+2. "Bildirim Ä°zni Ver" butonuna basarak Windows bildirim izni talebini onaylayÄ±n (Bu
+   sayede WhatsApp ve Outlook bildirimleriniz otomatik Ã¶zetlenecektir).
+
+* AyrÄ±ntÄ±lÄ± ekran resimli kÄ±lavuz iÃ§in klasÃ¶rdeki "QuickNoteApp-Kurulum-Kilavuzu.pdf"
+  dosyasÄ±nÄ± aÃ§Ä±p inceleyebilirsiniz.

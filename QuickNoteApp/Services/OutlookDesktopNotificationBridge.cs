@@ -125,8 +125,10 @@ public sealed class OutlookDesktopNotificationBridge : IDisposable
                     if (snapshot.ReceivedAt < DateTime.Now.AddDays(-1))
                         continue;
 
-                    _db.AddNotification("Outlook", snapshot.Title, snapshot.Body, snapshot.ReceivedAt);
-                    importedCount++;
+                    if (_db.AddNotification("Outlook", snapshot.Title, snapshot.Body, snapshot.ReceivedAt))
+                    {
+                        importedCount++;
+                    }
                 }
                 finally
                 {

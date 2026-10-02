@@ -9,7 +9,7 @@
   <Identity
     Name="Obuzhukuk.QuickNoteApp"
     Publisher="CN=Obuzhukuk"
-    Version="1.0.0.0" />
+    Version="1.0.0.98" />
 
   <Properties>
     <DisplayName>QuickNoteApp</DisplayName>

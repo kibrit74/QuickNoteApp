@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text.RegularExpressions;
+using System.Text;
 using Microsoft.Data.Sqlite;
 using QuickNoteApp.Models;
 
@@ -17,6 +19,7 @@ public class DatabaseService
     private const string CurrentFtsIndexVersion = "1";
     private const string FtsIndexVersionKey = "FtsIndexVersion";
     private const string FtsIndexBuiltAtKey = "FtsIndexBuiltAt";
+    private const string ProtectedSecretPrefix = "dpapi:";
 
     private readonly string _connectionString;
 
@@ -38,6 +41,8 @@ public class DatabaseService
         _dbPath = dbPath;
         _connectionString = $"Data Source={_dbPath}";
     }
+
+    public string DatabasePath => _dbPath;
 
     public string AttachmentsDirectory
     {
@@ -136,6 +141,13 @@ public class DatabaseService
             );
             """;
         cmd.ExecuteNonQuery();
+
+        using (var cleanupCmd = conn.CreateCommand())
+        {
+            cleanupCmd.CommandText = "UPDATE Notes SET ImagePath = NULL WHERE ImagePath = 'Telegram' OR ImagePath = 'Telegram, Ses';";
+            cleanupCmd.ExecuteNonQuery();
+        }
+
         EnsureNoteColumn(conn, "Title", "TEXT NOT NULL DEFAULT ''");
         EnsureNoteColumn(conn, "Tags", "TEXT NOT NULL DEFAULT ''");
         EnsureNoteColumn(conn, "ImagePath", "TEXT NULL");
@@ -145,7 +157,29 @@ public class DatabaseService
         EnsureReminderColumn(conn, "SourceType", "TEXT NULL");
         EnsureReminderColumn(conn, "SourceKey", "TEXT NULL");
         EnsureReminderSourceIndex(conn);
-        EnsureFtsIndexes(conn);
+
+        var isTest = System.Reflection.Assembly.GetEntryAssembly()?.GetName().Name?.Contains("Tests", StringComparison.OrdinalIgnoreCase) ?? false;
+        if (isTest)
+        {
+            EnsureFtsIndexes(conn);
+        }
+        else
+        {
+            var connStr = _connectionString;
+            System.Threading.Tasks.Task.Run(() =>
+            {
+                try
+                {
+                    using var backgroundConn = new SqliteConnection(connStr);
+                    backgroundConn.Open();
+                    EnsureFtsIndexes(backgroundConn);
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[DatabaseService] Background FTS init error: {ex.Message}");
+                }
+            });
+        }
     }
 
     public int AddNote(string title, string text, string? imagePath = null, List<string>? tagsList = null)
@@ -244,7 +278,7 @@ public class DatabaseService
         using var conn = new SqliteConnection(_connectionString);
         conn.Open();
         var cmd = conn.CreateCommand();
-        cmd.CommandText = "SELECT Id, Title, Text, Tags, ImagePath, IsDone, CreatedAt, IsPinned, IsDeleted, UpdatedAt FROM Notes WHERE IsDeleted = 0 AND SUBSTR(CreatedAt, 1, 10) = $date ORDER BY IsPinned DESC, CreatedAt ASC";
+        cmd.CommandText = "SELECT Id, Title, Text, Tags, ImagePath, IsDone, CreatedAt, IsPinned, IsDeleted, UpdatedAt FROM Notes WHERE IsDeleted = 0 AND SUBSTR(CreatedAt, 1, 10) = $date ORDER BY IsPinned DESC, CreatedAt DESC";
         cmd.Parameters.AddWithValue("$date", date.ToString("yyyy-MM-dd"));
 
         return ReadNotes(cmd);
@@ -306,15 +340,38 @@ public class DatabaseService
 
         return result.Count > 0 ? result : SearchNotificationsInMemory(cleanedQuery, limit);
     }
-    public void AddNotification(string appName, string title, string body)
+    public bool AddNotification(string appName, string title, string body)
     {
-        AddNotification(appName, title, body, DateTime.Now);
+        return AddNotification(appName, title, body, DateTime.Now);
     }
 
-    public void AddNotification(string appName, string title, string body, DateTime receivedAt)
+    public bool AddNotification(string appName, string title, string body, DateTime receivedAt)
     {
         using var conn = new SqliteConnection(_connectionString);
         conn.Open();
+
+        // 5 dakikalik pencerede ayni bildirim var mi kontrol et
+        var checkCmd = conn.CreateCommand();
+        checkCmd.CommandText = """
+            SELECT COUNT(*) FROM Notifications 
+            WHERE AppName = $app 
+              AND Title = $title 
+              AND Body = $body 
+              AND ReceivedAt >= $timeMin 
+              AND ReceivedAt <= $timeMax
+            """;
+        checkCmd.Parameters.AddWithValue("$app", appName);
+        checkCmd.Parameters.AddWithValue("$title", title);
+        checkCmd.Parameters.AddWithValue("$body", body);
+        checkCmd.Parameters.AddWithValue("$timeMin", receivedAt.AddMinutes(-5).ToString("O"));
+        checkCmd.Parameters.AddWithValue("$timeMax", receivedAt.AddMinutes(5).ToString("O"));
+
+        var count = Convert.ToInt32(checkCmd.ExecuteScalar());
+        if (count > 0)
+        {
+            return false;
+        }
+
         var cmd = conn.CreateCommand();
         cmd.CommandText = "INSERT OR IGNORE INTO Notifications (AppName, Title, Body, ReceivedAt) VALUES ($app, $title, $body, $receivedAt)";
         cmd.Parameters.AddWithValue("$app", appName);
@@ -326,7 +383,9 @@ public class DatabaseService
         if (affected > 0)
         {
             UpsertNotificationFts(conn, GetLastInsertRowId(conn), appName, title, body);
+            return true;
         }
+        return false;
     }
 
     public List<NotificationLogItem> GetNotificationsForDate(DateTime date)
@@ -594,6 +653,54 @@ public class DatabaseService
         cmd.CommandText = "SELECT Value FROM AppMeta WHERE Key = $key";
         cmd.Parameters.AddWithValue("$key", key);
         return cmd.ExecuteScalar() as string;
+    }
+
+    public string? GetMeta(string key)
+    {
+        using var conn = new SqliteConnection(_connectionString);
+        conn.Open();
+        return GetMetaValue(conn, key);
+    }
+
+    public void SetMeta(string key, string value)
+    {
+        using var conn = new SqliteConnection(_connectionString);
+        conn.Open();
+        SetMetaValue(conn, key, value);
+    }
+
+    public string? GetSecret(string key)
+    {
+        var storedValue = GetMeta(key);
+        if (string.IsNullOrEmpty(storedValue))
+            return storedValue;
+
+        if (!storedValue.StartsWith(ProtectedSecretPrefix, StringComparison.Ordinal))
+            return storedValue;
+
+        try
+        {
+            var protectedBytes = Convert.FromBase64String(storedValue[ProtectedSecretPrefix.Length..]);
+            var plainBytes = ProtectedData.Unprotect(protectedBytes, null, DataProtectionScope.CurrentUser);
+            return Encoding.UTF8.GetString(plainBytes);
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    public void SetSecret(string key, string value)
+    {
+        if (string.IsNullOrEmpty(value))
+        {
+            SetMeta(key, string.Empty);
+            return;
+        }
+
+        var plainBytes = Encoding.UTF8.GetBytes(value);
+        var protectedBytes = ProtectedData.Protect(plainBytes, null, DataProtectionScope.CurrentUser);
+        SetMeta(key, ProtectedSecretPrefix + Convert.ToBase64String(protectedBytes));
     }
 
     private static void SetMetaValue(SqliteConnection conn, string key, string value)
@@ -1257,6 +1364,262 @@ public class DatabaseService
             throw;
         }
     }
+
+    public int GetNotesCount()
+    {
+        using var conn = new SqliteConnection(_connectionString);
+        conn.Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = "SELECT COUNT(*) FROM Notes WHERE IsDeleted = 0";
+        return Convert.ToInt32(cmd.ExecuteScalar());
+    }
+
+    public int GetNotificationsCount()
+    {
+        using var conn = new SqliteConnection(_connectionString);
+        conn.Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = "SELECT COUNT(*) FROM Notifications";
+        return Convert.ToInt32(cmd.ExecuteScalar());
+    }
+
+    public int GetRemindersCount()
+    {
+        using var conn = new SqliteConnection(_connectionString);
+        conn.Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = "SELECT COUNT(*) FROM Reminders";
+        return Convert.ToInt32(cmd.ExecuteScalar());
+    }
+
+    public int GetTagsCount()
+    {
+        using var conn = new SqliteConnection(_connectionString);
+        conn.Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = "SELECT COUNT(*) FROM Tags";
+        return Convert.ToInt32(cmd.ExecuteScalar());
+    }
+
+    public long GetDatabaseSizeBytes()
+    {
+        if (File.Exists(_dbPath))
+        {
+            try
+            {
+                return new FileInfo(_dbPath).Length;
+            }
+            catch
+            {
+                return 0;
+            }
+        }
+        return 0;
+    }
+
+    public DatabaseMaintenanceStats GetDatabaseStats()
+    {
+        var stats = new DatabaseMaintenanceStats
+        {
+            NotesCount = GetNotesCount(),
+            NotificationsCount = GetNotificationsCount(),
+            RemindersCount = GetRemindersCount(),
+            TagsCount = GetTagsCount(),
+            DatabaseSizeBytes = GetDatabaseSizeBytes()
+        };
+
+        var lastBuilt = GetMeta(FtsIndexBuiltAtKey);
+        if (DateTimeOffset.TryParse(lastBuilt, out var dto))
+        {
+            stats.LastFtsIndexBuiltAt = dto.LocalDateTime;
+        }
+
+        return stats;
+    }
+
+    public void BackupDatabase(string targetPath)
+    {
+        using (var conn = new SqliteConnection(_connectionString))
+        {
+            conn.Open();
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = "PRAGMA wal_checkpoint(TRUNCATE);";
+            cmd.ExecuteNonQuery();
+        }
+        File.Copy(_dbPath, targetPath, true);
+    }
+
+    public void RestoreDatabaseFromBackup(string backupPath)
+    {
+        if (string.IsNullOrWhiteSpace(backupPath) || !File.Exists(backupPath))
+            throw new FileNotFoundException("Yedek dosyasi bulunamadi.", backupPath);
+
+        using (var conn = new SqliteConnection(_connectionString))
+        {
+            conn.Open();
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = "PRAGMA wal_checkpoint(TRUNCATE);";
+            cmd.ExecuteNonQuery();
+        }
+
+        File.Copy(backupPath, _dbPath, true);
+
+        var walPath = _dbPath + "-wal";
+        var shmPath = _dbPath + "-shm";
+        if (File.Exists(walPath))
+            File.Delete(walPath);
+        if (File.Exists(shmPath))
+            File.Delete(shmPath);
+    }
+
+    public void ClearAllData()
+    {
+        using var conn = new SqliteConnection(_connectionString);
+        conn.Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = """
+            DELETE FROM Notes;
+            DELETE FROM Notifications;
+            DELETE FROM Reminders;
+            DELETE FROM CalendarEvents;
+            DELETE FROM AppMeta;
+            VACUUM;
+            """;
+        cmd.ExecuteNonQuery();
+    }
+
+    public string RunIntegrityCheck()
+    {
+        try
+        {
+            using var conn = new SqliteConnection(_connectionString);
+            conn.Open();
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = "PRAGMA integrity_check;";
+            using var reader = cmd.ExecuteReader();
+            var results = new List<string>();
+            while (reader.Read())
+            {
+                results.Add(reader.GetString(0));
+            }
+            return string.Join(Environment.NewLine, results);
+        }
+        catch (Exception ex)
+        {
+            return $"Hata: {ex.Message}";
+        }
+    }
+
+    public void VacuumDatabase()
+    {
+        using var conn = new SqliteConnection(_connectionString);
+        conn.Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = "VACUUM;";
+        cmd.ExecuteNonQuery();
+    }
+
+    public void RebuildSearchIndexes()
+    {
+        using var conn = new SqliteConnection(_connectionString);
+        conn.Open();
+        RebuildFtsIndexes(conn);
+        SetMetaValue(conn, FtsIndexBuiltAtKey, DateTimeOffset.UtcNow.ToString("O"));
+    }
+
+    public int PurgeOldNotifications(int daysToKeep)
+    {
+        var cutoffDate = DateTime.Now.AddDays(-daysToKeep).ToString("yyyy-MM-dd HH:mm:ss");
+        using var conn = new SqliteConnection(_connectionString);
+        conn.Open();
+        using var transaction = conn.BeginTransaction();
+        try
+        {
+            using var selectCmd = conn.CreateCommand();
+            selectCmd.Transaction = transaction;
+            selectCmd.CommandText = "SELECT Id FROM Notifications WHERE ReceivedAt < $cutoff";
+            selectCmd.Parameters.AddWithValue("$cutoff", cutoffDate);
+
+            var toDelete = new List<int>();
+            using (var reader = selectCmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    toDelete.Add(reader.GetInt32(0));
+                }
+            }
+
+            if (toDelete.Count > 0)
+            {
+                using var deleteFtsCmd = conn.CreateCommand();
+                deleteFtsCmd.Transaction = transaction;
+                deleteFtsCmd.CommandText = "DELETE FROM NotificationsFts WHERE NotificationId = $id";
+                var idParam = deleteFtsCmd.Parameters.Add("$id", SqliteType.Integer);
+
+                foreach (var id in toDelete)
+                {
+                    idParam.Value = id;
+                    deleteFtsCmd.ExecuteNonQuery();
+                }
+
+                using var deleteCmd = conn.CreateCommand();
+                deleteCmd.Transaction = transaction;
+                deleteCmd.CommandText = "DELETE FROM Notifications WHERE ReceivedAt < $cutoff";
+                deleteCmd.Parameters.AddWithValue("$cutoff", cutoffDate);
+                deleteCmd.ExecuteNonQuery();
+            }
+
+            transaction.Commit();
+            return toDelete.Count;
+        }
+        catch
+        {
+            transaction.Rollback();
+            throw;
+        }
+    }
+
+    public string ExportAllNotesAsJson()
+    {
+        using var conn = new SqliteConnection(_connectionString);
+        conn.Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = "SELECT Id, Title, Text, Tags, ImagePath, IsDone, CreatedAt, IsPinned, UpdatedAt FROM Notes WHERE IsDeleted = 0";
+
+        var notes = new List<Dictionary<string, object?>>();
+        using (var reader = cmd.ExecuteReader())
+        {
+            while (reader.Read())
+            {
+                var note = new Dictionary<string, object?>
+                {
+                    ["Id"] = reader.GetInt32(0),
+                    ["Title"] = reader.GetString(1),
+                    ["Text"] = reader.GetString(2),
+                    ["Tags"] = reader.GetString(3),
+                    ["ImagePath"] = reader.IsDBNull(4) ? null : reader.GetString(4),
+                    ["IsDone"] = reader.GetInt32(5) == 1,
+                    ["CreatedAt"] = reader.GetString(6),
+                    ["IsPinned"] = reader.GetInt32(7) == 1,
+                    ["UpdatedAt"] = reader.IsDBNull(8) ? null : reader.GetString(8)
+                };
+                notes.Add(note);
+            }
+        }
+
+        var options = new System.Text.Json.JsonSerializerOptions { WriteIndented = true };
+        return System.Text.Json.JsonSerializer.Serialize(notes, options);
+    }
+}
+
+public class DatabaseMaintenanceStats
+{
+    public int NotesCount { get; set; }
+    public int NotificationsCount { get; set; }
+    public int RemindersCount { get; set; }
+    public int TagsCount { get; set; }
+    public long DatabaseSizeBytes { get; set; }
+    public DateTime? LastFtsIndexBuiltAt { get; set; }
 }
 
 

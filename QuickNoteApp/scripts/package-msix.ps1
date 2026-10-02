@@ -1,7 +1,7 @@
 param(
     [string]$Configuration = "Release",
     [string]$Runtime = "win-x64",
-    [string]$Version = "1.0.0.61",
+    [string]$Version = "1.0.0.105",
     [switch]$Install
 )
 
@@ -23,6 +23,9 @@ $InstallerZipPath = Join-Path $ArtifactsDir "QuickNoteApp-Kurulum.zip"
 function Find-Tool($toolName) {
     $fromPath = Get-Command $toolName -ErrorAction SilentlyContinue
     if ($fromPath) { return $fromPath.Source }
+
+    $knownPath = "C:\Program Files (x86)\Windows Kits\10\bin\10.0.19041.0\x64\$toolName"
+    if (Test-Path $knownPath) { return $knownPath }
 
     $kitRoot = "C:\Program Files (x86)\Windows Kits\10\bin"
     if (Test-Path $kitRoot) {
@@ -106,19 +109,54 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0QuickNoteApp-Kur.p
 "@
 
     $readme = @"
-QuickNoteApp Kurulum
-====================
+QuickNoteApp Kurulum ve Yapılandırma Kılavuzu
+=============================================
 
-Normal kullanici icin tek adim:
-1. QuickNoteApp-Kur.cmd dosyasina cift tikla.
+Bu klasör, Windows için akıllı not alma, bildirim takibi ve Gemini CLI destekli 
+masaüstü uygulamasının kurulumunu içerir.
 
-Bu dosya sunlari otomatik yapar:
-- Sertifikayi kullaniciya guvenilir olarak ekler.
-- Eski QuickNoteApp kuruluysa kaldirir.
-- Yeni QuickNoteApp MSIX paketini kurar.
+---------------------------------------------------------
+ADIM 1: UYGULAMA KURULUMU (Tek Tıkla)
+---------------------------------------------------------
+1. Klasör içerisindeki "QuickNoteApp-Kur.cmd" dosyasına çift tıklayın.
+2. Karşınıza mavi "Windows kişisel bilgisayarınızı korudu" ekranı çıkarsa,
+   "Ek Bilgi" yazısına ve ardından altta çıkan "Yine de Çalıştır" butonuna basın.
+3. Kurulum penceresi açılacak, geliştirici sertifikasını güvenli olarak ekleyecek 
+   ve uygulamayı kuracaktır. İşlem bitince terminali kapatın.
+4. Başlat menüsüne "QuickNoteApp" yazarak uygulamayı açın.
 
-Kurulum bitince Baslat menusunde QuickNoteApp diye aratip ac.
-Ilk acilista Gemini rehberi gelirse Kurulum Yardimcisini Ac dugmesine bas.
+---------------------------------------------------------
+ADIM 2: GEMINI CLI KURULUMU VE GİRİŞ YAPMA (Yapay Zeka Özellikleri İçin)
+---------------------------------------------------------
+QuickNoteApp'in Yapay Zeka Dikte, Özetleme ve Planlama yapabilmesi için:
+1. Uygulama ilk açıldığında ekrana gelen Kurulum Sihirbazı'nda "Gemini CLI" 
+   satırının yanındaki "Otomatik Kur" butonuna basın.
+2. Bu işlem bilgisayarınıza Node.js LTS ve Gemini CLI paketini kuracaktır.
+3. Kurulum bittikten sonra sihirbazdaki "Giriş Yap" butonuna basın (ya da boş bir
+   komut satırına/terminale "gemini" yazıp çalıştırın).
+4. Terminalde yön tuşları ile "Sign in with Google" seçeneğini seçip Enter'a basın.
+5. Tarayıcınızda açılan Google oturum açma sayfasından Google hesabınıza giriş yapın
+   ve izinleri onaylayın. "Authenticated successfully" yazısını görünce kapatabilirsiniz.
+6. Kurulum sihirbazında "Yeniden Denetle" butonuna basarak yeşile döndüğünü doğrulayın.
+
+---------------------------------------------------------
+ADIM 3: GOOGLE TAKVİM BAĞLANTISI (Takvim Entegrasyonu İçin)
+---------------------------------------------------------
+Notlarınızı takvime eklemek ve gün sonu planında takvim etkinliklerinizi görmek için:
+1. Kurulum Sihirbazı'ndaki "Google Takvim" satırının yanındaki "Bağlan" butonuna basın.
+2. Tarayıcıda açılan sayfada Google hesabınızı seçin, takvim erişim izinlerini
+   onaylayın ve "Giriş başarılı" yazısını görünce sekmeyi kapatın.
+3. Sihirbazda durum "Bağlı (eposta@gmail.com)" olarak güncellenecektir.
+
+---------------------------------------------------------
+ADIM 4: SES VE BİLDİRİM İZİNLERİ
+---------------------------------------------------------
+1. Sihirbazdaki "Mikrofon İzni Ver" butonuna basarak Windows ayarlarından mikrofonu açın.
+2. "Bildirim İzni Ver" butonuna basarak Windows bildirim izni talebini onaylayın (Bu
+   sayede WhatsApp ve Outlook bildirimleriniz otomatik özetlenecektir).
+
+* Ayrıntılı ekran resimli kılavuz için klasördeki "QuickNoteApp-Kurulum-Kilavuzu.pdf"
+  dosyasını açıp inceleyebilirsiniz.
 "@
 
     [System.IO.File]::WriteAllText($installerPs1Path, $installerPs1, [System.Text.UTF8Encoding]::new($false))
@@ -181,6 +219,12 @@ Write-Host "MSIX imzalanıyor..."
 & $signtool sign /fd SHA256 /sha1 $cert.Thumbprint $PackagePath
 
 Write-InstallerFiles $ArtifactsDir (Split-Path -Leaf $PackagePath) (Split-Path -Leaf $CertPath)
+$RepoRoot = Split-Path -Parent $ProjectDir
+$pdfSource = Join-Path $RepoRoot "QuickNoteApp-Kurulum-Kilavuzu.pdf"
+$pdfDest = Join-Path $ArtifactsDir "QuickNoteApp-Kurulum-Kilavuzu.pdf"
+if (Test-Path $pdfSource) {
+    Copy-Item $pdfSource $pdfDest -Force
+}
 if (Test-Path $InstallerZipPath) { Remove-Item $InstallerZipPath -Force }
 $installerFiles = @(
     (Join-Path $ArtifactsDir "QuickNoteApp-Kur.cmd"),
@@ -189,6 +233,9 @@ $installerFiles = @(
     $CertPath,
     (Join-Path $ArtifactsDir "BENI-OKU-KURULUM.txt")
 )
+if (Test-Path $pdfDest) {
+    $installerFiles += $pdfDest
+}
 Compress-Archive -Path $installerFiles -DestinationPath $InstallerZipPath -Force
 
 Write-Host "Hazır: $PackagePath" -ForegroundColor Green

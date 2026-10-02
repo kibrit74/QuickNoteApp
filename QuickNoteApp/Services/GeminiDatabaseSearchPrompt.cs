@@ -1,4 +1,4 @@
-﻿namespace QuickNoteApp.Services;
+namespace QuickNoteApp.Services;
 
 public static class GeminiDatabaseSearchPrompt
 {
@@ -13,7 +13,7 @@ Eski kodlama uyumu: yerel veritabanı.
 Kayıtlar notlardan ve kaydedilmiş Outlook/WhatsApp bildirimlerinden gelir.
 Soru sayı, tarih, kişi veya uygulama içeriyorsa kayıtları buna göre bul ve sonucu net söyle.
 Emin olmadığın eşleşmeleri ayrı belirt.
-Cevabı kısa ve Türkçe yaz.
+Cevabı kısa ve kullanıcının sorusuyla aynı dilde yaz (örneğin soru İngilizce ise İngilizce, Türkçe ise Türkçe vb. yaz). / Write the response shortly and in the same language as the user's question.
 
 Yerel veritabanı kayıtları:
 {databaseContext.Trim()}

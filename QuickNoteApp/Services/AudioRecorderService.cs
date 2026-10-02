@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using NAudio.Wave;
 
 namespace QuickNoteApp.Services;
@@ -9,6 +9,13 @@ public sealed class AudioRecorderService : IDisposable
     private WaveInEvent? _waveIn;
     private WaveFileWriter? _writer;
     private string? _currentPath;
+    
+    // VAD & UI Feedback
+    public event EventHandler<float>? AudioVolumeChanged;
+    public event EventHandler? SilenceDetected;
+    private DateTime _lastSpeechTime;
+    private const float SilenceThreshold = 0.015f; // %1.5 ses seviyesi altı sessizlik
+    private readonly TimeSpan _silenceTimeout = TimeSpan.FromSeconds(2.0); // 2 saniye sessizlik süresi
 
     public bool IsRecording { get; private set; }
 
@@ -29,11 +36,13 @@ public sealed class AudioRecorderService : IDisposable
                 throw new InvalidOperationException("Kayıt zaten devam ediyor.");
 
             _currentPath = CreateRecordingPath();
+            _lastSpeechTime = DateTime.Now; // Start timing immediately
+            
             _waveIn = new WaveInEvent
             {
                 DeviceNumber = 0,
                 WaveFormat = new WaveFormat(16000, 16, 1),
-                BufferMilliseconds = 100
+                BufferMilliseconds = 50 // Daha hızlı UI tepkisi için düşürüldü
             };
             _writer = new WaveFileWriter(_currentPath, _waveIn.WaveFormat);
 
@@ -43,6 +52,29 @@ public sealed class AudioRecorderService : IDisposable
                 {
                     _writer?.Write(args.Buffer, 0, args.BytesRecorded);
                     _writer?.Flush();
+                }
+
+                // RMS Calculation for Volume and Silence Detection
+                float max = 0;
+                for (int index = 0; index < args.BytesRecorded; index += 2)
+                {
+                    short sample = (short)((args.Buffer[index + 1] << 8) | args.Buffer[index + 0]);
+                    var sample32 = sample / 32768f;
+                    if (sample32 < 0) sample32 = -sample32;
+                    if (sample32 > max) max = sample32;
+                }
+
+                AudioVolumeChanged?.Invoke(this, max);
+
+                if (max > SilenceThreshold)
+                {
+                    _lastSpeechTime = DateTime.Now;
+                }
+                else if (DateTime.Now - _lastSpeechTime > _silenceTimeout && IsRecording)
+                {
+                    SilenceDetected?.Invoke(this, EventArgs.Empty);
+                    // Prevent firing multiple times by resetting the timer
+                    _lastSpeechTime = DateTime.Now; 
                 }
             };
 

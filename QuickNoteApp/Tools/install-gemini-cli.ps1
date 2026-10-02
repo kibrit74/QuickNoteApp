@@ -43,63 +43,37 @@ function Install-NodeLts {
 }
 
 try {
-    Write-Host "QuickNoteApp - Gemini CLI kurulumu" -ForegroundColor Green
-    Write-Host "Resmi paket kurulacak: @google/gemini-cli"
+    Write-Host "QuickNoteApp - Antigravity CLI (agy) Kurulumu ve Kontrolü" -ForegroundColor Green
 
-    Write-Step "1) Node.js kontrol ediliyor..."
-    if (-not (Test-NodeReady)) {
-        Write-Host "Node.js veya npm bulunamadi. Otomatik Node.js LTS kurulumu deneniyor." -ForegroundColor Yellow
-        if (-not (Install-NodeLts)) {
-            Write-Host ""
-            Write-Host "Node.js kurulmadan Gemini CLI kurulamaz." -ForegroundColor Red
-            Write-Host "Daha stabil elle kurulum yolu:"
-            Write-Host "1) https://nodejs.org/ adresinden Node.js LTS indirip kurun."
-            Write-Host "2) Yeni terminal acip bu dosyayi tekrar calistirin."
-            Pause-End
-            exit 2
+    Write-Step "1) Antigravity CLI (agy) kontrol ediliyor..."
+    $agy = Get-Command agy -ErrorAction SilentlyContinue
+    if (-not $agy) {
+        $localAgy = Join-Path $env:LOCALAPPDATA "agy\bin\agy.exe"
+        if (Test-Path $localAgy) {
+            $env:Path = "$env:Path;$env:LOCALAPPDATA\agy\bin"
+            $agy = Get-Command agy -ErrorAction SilentlyContinue
         }
     }
 
-    Write-Host "Node.js hazir: $(& node --version)"
-    Write-Host "npm hazir: $(& npm --version)"
-
-    Write-Step "2) Gemini CLI kuruluyor veya guncelleniyor..."
-    & npm install -g @google/gemini-cli@latest
-
-    Write-Step "3) Kurulum kontrol ediliyor..."
-    $gemini = Get-Command gemini -ErrorAction SilentlyContinue
-    if (-not $gemini) {
-        $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
-        $gemini = Get-Command gemini -ErrorAction SilentlyContinue
+    if ($agy) {
+        Write-Host "Antigravity CLI (agy) hazır: $(& agy --version)" -ForegroundColor Green
+    } else {
+        Write-Host "Antigravity CLI (agy) henüz sistem yolunda bulunamadı." -ForegroundColor Yellow
+        Write-Host "Lütfen 'agy' istemcisinin bilgisayarınıza yüklendiğinden emin olun."
     }
 
-    if (-not $gemini) {
-        Write-Host "Gemini CLI kuruldu ama PATH henuz yenilenmemis olabilir." -ForegroundColor Yellow
-        Write-Host "Terminali kapatip acin ve su komutu deneyin:"
-        Write-Host "gemini --version" -ForegroundColor White
-        Pause-End
-        exit 1
-    }
-
-    Write-Host "Gemini CLI hazir: $(& gemini --version)" -ForegroundColor Green
-
-    Write-Step "4) Oturum acma"
-    Write-Host "Yeni bir terminal acin ve su komutu yazin:"
-    Write-Host "gemini" -ForegroundColor White
-    Write-Host "Ekranda 'Sign in with Google' secenegini secin."
-    Write-Host "Tarayicida Google hesabiniza giris yapin, sonra terminale geri donun."
+    Write-Step "2) Oturum açma işlemi"
+    Write-Host "Yeni bir terminal açın ve şu komutu yazın:"
+    Write-Host "agy" -ForegroundColor White
+    Write-Host "Oturum açtıktan sonra QuickNoteApp otomatik olarak yetkileri kullanacaktır."
     Write-Host ""
-    Write-Host "QuickNoteApp icinde 'AI Analiz', 'Dikte' ve 'Plan' dugmeleri Gemini CLI hazir oldugunda calisir."
+    Write-Host "QuickNoteApp içinde 'AI Analiz', 'Dikte' ve 'Plan' düğmeleri agy hazır olduğunda çalışır."
     Pause-End
 }
 catch {
     Write-Host ""
-    Write-Host "Kurulum tamamlanamadi:" -ForegroundColor Red
+    Write-Host "Kurulum/Kontrol tamamlanamadı:" -ForegroundColor Red
     Write-Host $_.Exception.Message
-    Write-Host ""
-    Write-Host "Daha stabil yol: Node.js LTS kurulu oldugunu kontrol edin, sonra terminalde su komutu calistirin:"
-    Write-Host "winget install --id OpenJS.NodeJS.LTS --source winget" -ForegroundColor White
-    Write-Host "npm install -g @google/gemini-cli@latest" -ForegroundColor White
     Pause-End
     exit 1
 }

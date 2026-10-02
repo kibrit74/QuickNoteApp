@@ -21,6 +21,7 @@ public partial class App : System.Windows.Application
     private CalendarReminderSyncService _calendarReminderSync = null!;
 
     private QuickNoteWindow? _quickNoteWindow;
+    private QuickAddNoteWindow? _quickAddWindow;
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
@@ -39,6 +40,7 @@ public partial class App : System.Windows.Application
         _tray = new TrayIconService();
         _tray.OpenNoteRequested += (_, _) => ShowQuickNoteWindow();
         _tray.OpenReviewRequested += (_, _) => ShowReviewWindow();
+        _tray.OpenSettingsRequested += (_, _) => ShowSettingsWindow();
         _tray.ExitRequested += (_, _) => Shutdown();
         StartupLog("Tray hazır");
         
@@ -187,6 +189,9 @@ public partial class App : System.Windows.Application
 
         if (!TryRegisterHotkey(HotkeyManager.REVIEW_HOTKEY_ID, ModifierKeys.Control | ModifierKeys.Shift, System.Windows.Forms.Keys.R))
             TryRegisterHotkey(HotkeyManager.REVIEW_HOTKEY_ID, ModifierKeys.Control | ModifierKeys.Alt, System.Windows.Forms.Keys.R);
+
+        if (!TryRegisterHotkey(HotkeyManager.QUICK_ADD_HOTKEY_ID, ModifierKeys.Control, System.Windows.Forms.Keys.N))
+            TryRegisterHotkey(HotkeyManager.QUICK_ADD_HOTKEY_ID, ModifierKeys.Control | ModifierKeys.Shift, System.Windows.Forms.Keys.Q);
     }
 
     private bool TryRegisterHotkey(int id, ModifierKeys modifiers, System.Windows.Forms.Keys key)
@@ -208,6 +213,25 @@ public partial class App : System.Windows.Application
             ShowQuickNoteWindow();
         else if (hotkeyId == HotkeyManager.REVIEW_HOTKEY_ID)
             ShowReviewWindow();
+        else if (hotkeyId == HotkeyManager.QUICK_ADD_HOTKEY_ID)
+            ShowQuickAddWindow();
+    }
+
+    private void ShowQuickAddWindow()
+    {
+        if (_quickAddWindow == null || !_quickAddWindow.IsLoaded)
+        {
+            _quickAddWindow = new QuickAddNoteWindow(_db, () =>
+            {
+                if (_quickNoteWindow != null && _quickNoteWindow.IsLoaded)
+                {
+                    _quickNoteWindow.RefreshNotes();
+                }
+            });
+        }
+
+        _quickAddWindow.Show();
+        _quickAddWindow.Activate();
     }
 
     private void ShowQuickNoteWindow(DateTime? date = null)
@@ -231,6 +255,12 @@ public partial class App : System.Windows.Application
         var targetDate = date?.Date ?? _quickNoteWindow?.SelectedNoteDate?.Date ?? DateTime.Today;
         ShowQuickNoteWindow(targetDate);
         _quickNoteWindow?.ShowDailySummary(targetDate);
+    }
+
+    private void ShowSettingsWindow()
+    {
+        ShowQuickNoteWindow();
+        _quickNoteWindow?.OpenSettingsView();
     }
 
     protected override void OnExit(ExitEventArgs e)

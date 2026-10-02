@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickNoteApp — Kolay Kurulum ve Yapılandırma Kılavuzu</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #FBF9F6;
+            --text-color: #1E1E24;
+            --primary: #D9383A;
+            --primary-hover: #B52B2D;
+            --secondary: #2C2C35;
+            --beige-dark: #F0EAE1;
+            --beige-light: #F7F3EC;
+            --green: #2E7D32;
+            --red: #C62828;
+            --yellow: #F9A825;
+            --gray: #6C757D;
+            --card-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+            --border-radius: 12px;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #121216;
+                --text-color: #F5EFE6;
+                --secondary: #E0E0E6;
+                --beige-dark: #22222A;
+                --beige-light: #181820;
+                --card-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--bg-color);
+        }
+
+        /* Cover & Header */
+        .cover-image-container {
+            width: 100%;
+            height: 320px;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            margin-bottom: 40px;
+            position: relative;
+            box-shadow: var(--card-shadow);
+        }
+
+        .cover-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .guide-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .guide-header h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+            margin-bottom: 15px;
+        }
+
+        .guide-header p {
+            font-size: 1.2rem;
+            color: var(--gray);
+            max-width: 650px;
+            margin: 0 auto;
+        }
+
+        .badge-premium {
+            display: inline-block;
+            background-color: var(--beige-dark);
+            color: var(--primary);
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+
+        /* Section Styling */
+        .section-card {
+            background-color: var(--beige-light);
+            border: 1px solid var(--beige-dark);
+            border-radius: var(--border-radius);
+            padding: 35px;
+            margin-bottom: 35px;
+            box-shadow: var(--card-shadow);
+            page-break-inside: avoid;
+        }
+
+        .section-card h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-card h2 span.step-num {
+            background-color: var(--primary);
+            color: #FFFFFF;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            font-weight: 800;
+        }
+
+        .section-card p {
+            margin-bottom: 20px;
+            font-size: 1.05rem;
+        }
+
+        /* Instruction Steps list */
+        ol.steps-list {
+            list-style-type: none;
+            counter-reset: steps-counter;
+        }
+
+        ol.steps-list li {
+            counter-increment: steps-counter;
+            position: relative;
+            padding-left: 45px;
+            margin-bottom: 25px;
+        }
+
+        ol.steps-list li::before {
+            content: counter(steps-counter);
+            position: absolute;
+            left: 0;
+            top: 2px;
+            width: 28px;
+            height: 28px;
+            background-color: var(--beige-dark);
+            color: var(--text-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            border: 1px solid var(--primary);
+        }
+
+        ol.steps-list li strong {
+            display: block;
+            font-size: 1.1rem;
+            margin-bottom: 6px;
+            color: var(--secondary);
+        }
+
+        /* Callouts / Alerts */
+        .callout {
+            background-color: rgba(217, 56, 58, 0.05);
+            border-left: 4px solid var(--primary);
+            padding: 18px;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 20px 0;
+            font-size: 0.98rem;
+        }
+
+        .callout-info {
+            background-color: rgba(46, 125, 50, 0.05);
+            border-left: 4px solid var(--green);
+        }
+
+        .callout-warning {
+            background-color: rgba(249, 168, 37, 0.05);
+            border-left: 4px solid var(--yellow);
+        }
+
+        /* Command Line boxes */
+        .code-box {
+            background-color: #1E1E24;
+            color: #F8F8F2;
+            padding: 18px 24px;
+            border-radius: 8px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.95rem;
+            margin: 15px 0;
+            overflow-x: auto;
+            position: relative;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .code-box::before {
+            content: "Terminal / CMD";
+            position: absolute;
+            top: 4px;
+            right: 12px;
+            font-size: 0.75rem;
+            color: #6C757D;
+            font-family: sans-serif;
+            font-weight: 600;
+        }
+
+        .code-box.powershell::before {
+            content: "PowerShell";
+        }
+
+        .code-box code {
+            display: block;
+        }
+
+        .code-comment {
+            color: #75715E;
+        }
+
+        .code-highlight {
+            color: #F92672;
+            font-weight: bold;
+        }
+
+        /* UI Mockups (SVG & CSS) */
+        .ui-mockup {
+            border: 1px solid var(--beige-dark);
+            border-radius: var(--border-radius);
+            background: #FFFFFF;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+            margin: 25px auto;
+            max-width: 600px;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .ui-mockup {
+                background: #181820;
+                border-color: #2D2D38;
+            }
+        }
+
+        .mockup-titlebar {
+            background: #F0EAE1;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--beige-dark);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .mockup-titlebar {
+                background: #25252F;
+                border-color: #2D2D38;
+            }
+        }
+
+        .mockup-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--secondary);
+        }
+
+        .mockup-buttons {
+            display: flex;
+            gap: 6px;
+        }
+
+        .mockup-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #C62828;
+        }
+
+        .mockup-dot.yellow { background: #F9A825; }
+        .mockup-dot.green { background: #2E7D32; }
+
+        .mockup-body {
+            padding: 24px;
+        }
+
+        /* Setup Wizard UI Specifics */
+        .wizard-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .wizard-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            background: var(--bg-color);
+            border: 1px solid var(--beige-dark);
+            border-radius: 8px;
+        }
+
+        .wizard-item-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .status-dot.success { background-color: var(--green); box-shadow: 0 0 8px var(--green); }
+        .status-dot.error { background-color: var(--red); box-shadow: 0 0 8px var(--red); }
+        .status-dot.warning { background-color: var(--yellow); box-shadow: 0 0 8px var(--yellow); }
+
+        .wizard-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .wizard-btn.secondary {
+            background-color: var(--beige-dark);
+            color: var(--text-color);
+            border: 1px solid var(--beige-dark);
+        }
+
+        /* Print styling rules */
+        @media print {
+            body {
+                background-color: #FFFFFF;
+                color: #000000;
+                padding: 0;
+            }
+            .section-card {
+                background-color: #FFFFFF;
+                border: 1px solid #DDDDDD;
+                box-shadow: none;
+                page-break-inside: avoid;
+                margin-bottom: 25px;
+                padding: 20px;
+            }
+            .code-box {
+                background-color: #F8F9FA;
+                color: #212529;
+                border: 1px solid #CCCCCC;
+                box-shadow: none;
+            }
+            .code-box::before {
+                color: #6C757D;
+            }
+            .ui-mockup {
+                border: 1px solid #CCCCCC;
+                box-shadow: none;
+                page-break-inside: avoid;
+            }
+            .mockup-titlebar {
+                background: #EEEEEE;
+                border-bottom: 1px solid #CCCCCC;
+            }
+            .wizard-item {
+                background: #FFFFFF;
+                border: 1px solid #DDDDDD;
+            }
+            .cover-image-container {
+                height: 250px;
+                margin-bottom: 30px;
+            }
+            .btn {
+                display: none !important;
+            }
+        }
+
+        .btn-inline {
+            display: inline-block;
+            background-color: var(--primary);
+            color: #FFFFFF;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <!-- Cover Banner Image -->
+        <div class="cover-image-container">
+            <img src="cover_banner.png" alt="QuickNoteApp Kurulum Bannerı">
+        </div>
+
+        <!-- Header -->
+        <header class="guide-header">
+            <span class="badge-premium">Başlangıç Rehberi</span>
+            <h1>QuickNoteApp Kurulum Kılavuzu</h1>
+            <p>Windows üzerinde akıllı not alma, bildirim özetleme ve Google Takvim entegrasyonlu yapay zeka asistanınızı adım adım kurun.</p>
+        </header>
+
+        <!-- Section: Temel Kurulum -->
+        <div class="section-card">
+            <h2><span class="step-num">1</span> Tek Tıkla Uygulama Kurulumu</h2>
+            <p>QuickNoteApp kurulum süreci son derece basittir. Gerekli tüm adımlar otomatik olarak bir betik (script) ile tamamlanır.</p>
+            
+            <ol class="steps-list">
+                <li>
+                    <strong>Uygulama Paketini İndirin</strong>
+                    En güncel paketi indirmek için aşağıdaki bağlantıyı kullanın:
+                    <br><br>
+                    <a href="https://github.com/kibrit74/QuickNoteApp/releases/latest/download/QuickNoteApp-Kurulum.zip" class="btn-inline">QuickNoteApp-Kurulum.zip İndir</a>
+                </li>
+                <li>
+                    <strong>ZIP Arşivini Klasöre Çıkarın</strong>
+                    İndirdiğiniz <code>QuickNoteApp-Kurulum.zip</code> dosyasına sağ tıklayın ve <strong>"Tümünü Çıkar"</strong> diyerek masaüstünüze veya istediğiniz bir klasöre çıkartın.
+                </li>
+                <li>
+                    <strong>Kurulum Betiğini Çalıştırın</strong>
+                    Klasör içerisindeki <code>QuickNoteApp-Kur.cmd</code> dosyasına <strong>çift tıklayın</strong>.
+                    <div class="callout">
+                        <strong>Mavi Windows Koruma Ekranı Çıkarsa:</strong> Windows SmartScreen ekranı çıkarsa, sol üstteki <strong>"Ek Bilgi"</strong> yazısına tıklayın, ardından altta çıkan <strong>"Yine de Çalıştır"</strong> butonuna basın. Bu işlem, uygulamanın geliştirici sertifikasını bilgisayarınıza güvenli bir şekilde eklemek için gereklidir.
+                    </div>
+                </li>
+                <li>
+                    <strong>Kurulumun Tamamlanmasını Bekleyin</strong>
+                    Siyah terminal ekranı açılacak, geliştirici sertifikasını kuracak, eski sürüm varsa kaldıracak ve en güncel MSIX paketini yükleyecektir. İşlem bitince terminalde <code>Kurulum tamamlandı.</code> yazısı görünecektir. <strong>Enter</strong> tuşuna basarak kapatın.
+                </li>
+            </ol>
+
+            <div class="callout callout-info">
+                <strong>Tebrikler!</strong> Uygulama kuruldu. Artık Windows Başlat Menüsü'ne <strong>QuickNoteApp</strong> yazarak uygulamayı aratıp açabilirsiniz.
+            </div>
+        </div>
+
+        <!-- Section: Kurulum Sihirbazı -->
+        <div class="section-card">
+            <h2><span class="step-num">2</span> Kurulum Sihirbazı (Setup Wizard)</h2>
+            <p>Uygulamayı ilk başlattığınızda sizi <strong>Kurulum Sihirbazı</strong> karşılar. Bu ekran, uygulamanın tüm akıllı özelliklerinin (Gemini AI, Google Takvim, Mikrofon ve Bildirimler) düzgün çalışabilmesi için gerekli olan ayarları tek pencereden denetlemenizi sağlar.</p>
+
+            <div class="ui-mockup">
+                <div class="mockup-titlebar">
+                    <span class="mockup-title">QuickNoteApp - Kurulum Yardımcısı</span>
+                    <div class="mockup-buttons">
+                        <span class="mockup-dot"></span>
+                        <span class="mockup-dot yellow"></span>
+                        <span class="mockup-dot green"></span>
+                    </div>
+                </div>
+                <div class="mockup-body">
+                    <div class="wizard-list">
+                        <div class="wizard-item">
+                            <div class="wizard-item-left">
+                                <span class="status-dot error"></span>
+                                <span><strong>Gemini CLI:</strong> Kurulu Değil</span>
+                            </div>
+                            <button class="wizard-btn">Otomatik Kur</button>
+                        </div>
+                        <div class="wizard-item">
+                            <div class="wizard-item-left">
+                                <span class="status-dot error"></span>
+                                <span><strong>Gemini Giriş:</strong> Giriş Yapılmamış</span>
+                            </div>
+                            <button class="wizard-btn" style="background-color: var(--gray);">Giriş Yap</button>
+                        </div>
+                        <div class="wizard-item">
+                            <div class="wizard-item-left">
+                                <span class="status-dot error"></span>
+                                <span><strong>Google Takvim:</strong> Bağlantı Yok</span>
+                            </div>
+                            <button class="wizard-btn">Bağlan</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <p>Sihirbazdaki kırmızı noktaların tamamını yeşile çevirmek, uygulamanızdan maksimum verim almanızı sağlayacaktır. Şimdi bu adımları sırayla inceleyelim.</p>
+        </div>
+
+        <!-- Section: Gemini CLI Kurulumu -->
+        <div class="section-card">
+            <h2><span class="step-num">3</span> Gemini CLI Kurulumu ve Giriş Yapma</h2>
+            <p>QuickNoteApp'in Yapay Zeka ile Dikte, Not Özetleme ve Akıllı Gün Sonu Planı özellikleri resmi Google Gemini CLI aracını kullanır. Bu aracı kurmak çok basittir.</p>
+
+            <ol class="steps-list">
+                <li>
+                    <strong>Otomatik Kurulum (Önerilen)</strong>
+                    Kurulum Sihirbazı'nda <strong>Gemini CLI</strong> satırının yanındaki <strong>"Otomatik Kur"</strong> (veya Gemini CLI Kurulumu) butonuna tıklayın. 
+                    <br>
+                    Bu buton, arka planda güvenli bir PowerShell penceresi açarak bilgisayarınızda Node.js olup olmadığını denetler. Eğer yoksa <code>winget</code> aracılığıyla otomatik olarak kurar ve ardından <code>@google/gemini-cli</code> paketini yükler.
+                </li>
+                <li>
+                    <strong>Manuel Kurulum (Eğer otomatik kurulumda hata alırsanız)</strong>
+                    Bilgisayarınızda Node.js LTS sürümünün kurulu olduğundan emin olun (Yoksa <a href="https://nodejs.org/" target="_blank">nodejs.org</a> adresinden indirip kurabilirsiniz). Ardından komut istemini (CMD) açarak şu komutu yazıp Enter'a basın:
+                    <div class="code-box">
+                        <code>npm install -g @google/gemini-cli@latest</code>
+                    </div>
+                </li>
+                <li>
+                    <strong>Gemini CLI Hesabına Giriş Yapma</strong>
+                    Gemini CLI kurulduktan sonra Sihirbaz'daki <strong>"Giriş Yap"</strong> butonuna tıklayın ya da boş bir terminal açıp şu komutu yazın:
+                    <div class="code-box">
+                        <code>gemini</code>
+                    </div>
+                    Terminalde yön tuşlarını kullanarak <strong>"Sign in with Google"</strong> seçeneğinin üzerine gelin ve <strong>Enter</strong> tuşuna basın.
+                </li>
+                <li>
+                    <strong>Tarayıcıda Giriş Onayı</strong>
+                    Karşınıza otomatik olarak varsayılan tarayıcınızda bir Google oturum açma penceresi açılacaktır. Google hesabınızı seçip uygulamaya gerekli izinleri verin. Tarayıcıda <code>Authenticated successfully!</code> yazısını gördükten sonra terminali kapatabilirsiniz.
+                </li>
+            </ol>
+
+            <div class="callout callout-info">
+                <strong>Doğrulama:</strong> Kurulum yardımcısına geri dönüp <strong>"Yeniden Denetle"</strong> butonuna bastığınızda, Gemini CLI ve Giriş satırlarının yeşil yandığını ve <code>Hazır (v1.x.x)</code> yazdığını göreceksiniz.
+            </div>
+        </div>
+
+        <!-- Section: Google Takvim Entegrasyonu -->
+        <div class="section-card">
+            <h2><span class="step-num">4</span> Google Takvim Girişi ve Entegrasyonu</h2>
+            <p>Uygulamanın günlük takviminizi sorgulaması ve notlarınızdan otomatik olarak Google Takvim'e etkinlik eklemesi için takviminizi bağlamanız gerekir.</p>
+
+            <ol class="steps-list">
+                <li>
+                    <strong>Google Takvim "Bağlan" Butonuna Basın</strong>
+                    Kurulum Sihirbazı'nda veya Uygulama Ayarları'nda yer alan <strong>"Google Giriş" / "Bağlan"</strong> butonuna tıklayın.
+                </li>
+                <li>
+                    <strong>Tarayıcıda Açılan Sayfada Oturum Açın</strong>
+                    Uygulama otomatik olarak tarayıcınızda resmi Google API doğrulama sayfasını (<code>breviai.vercel.app/api/auth/google/start</code> aracılığıyla) açacaktır. Giriş yapmak istediğiniz Google hesabını seçin.
+                </li>
+                <li>
+                    <strong>Uygulama İzinlerini Onaylayın</strong>
+                    Google Takvim'e erişim izni istendiğinde, <strong>"Devam Et"</strong> ve <strong>"İzin Ver"</strong> seçeneklerini işaretleyin. Giriş başarılı olduğunda tarayıcıda <code>QuickNote Google girişi başarılı!</code> yazılı bir sayfa görünecektir. Bu sayfa açıldıktan sonra tarayıcıyı kapatabilirsiniz.
+                </li>
+                <li>
+                    <strong>Kurulum Sihirbazında Kontrol Edin</strong>
+                    Uygulamaya döndüğünüzde <strong>Google Takvim</strong> durumu yeşil renkte <code>Bağlı (eposta-adresiniz@gmail.com)</code> olarak güncellenecektir.
+                </li>
+            </ol>
+
+            <div class="callout callout-warning">
+                <strong>Oturum Süresi ve Güvenlik:</strong> Giriş verileriniz bilgisayarınızda yerel olarak (<code>%AppData%\QuickNoteApp\google-auth.json</code>) şifreli biçimde saklanır ve kesinlikle üçüncü taraflarla paylaşılmaz. Oturum süresi dolduğunda, butonda "Yenile" yazısı çıkar; tekrar tıklayıp tarayıcıdan tek tıkla yenileyebilirsiniz.
+            </div>
+        </div>
+
+        <!-- Section: Mikrofon ve Bildirim İzinleri -->
+        <div class="section-card">
+            <h2><span class="step-num">5</span> Mikrofon ve Bildirim İzinleri</h2>
+            <p>Uygulamanın sesli not alma (dikte) ve arka planda sistem bildirimlerini (WhatsApp, Outlook) izleyip özetleme özelliklerini aktifleştirmek için Windows sistem izinlerini onaylamanız gerekir.</p>
+
+            <ol class="steps-list">
+                <li>
+                    <strong>Mikrofon İzni:</strong>
+                    Sihirbazdaki <strong>Mikrofon İzni Ver</strong> butonuna basın. Açılan Windows Gizlilik Ayarları sayfasından mikrofon erişimini ve "Masaüstü uygulamalarının mikrofonunuza erişmesine izin verin" seçeneğini <strong>AÇIK</strong> konuma getirin.
+                </li>
+                <li>
+                    <strong>Bildirim Erişimi İzni:</strong>
+                    WhatsApp veya Outlook gibi uygulamalardan gelen bildirimlerin otomatik gün sonu özetine dahil edilebilmesi için <strong>"Bildirim İzni Ver"</strong> butonuna basın. Windows bildirim izni popup ekranı açıldığında <strong>"Evet/İzin Ver"</strong> butonuna tıklayın.
+                </li>
+            </ol>
+        </div>
+
+        <!-- Section: SSS ve Sorun Giderme -->
+        <div class="section-card" style="margin-bottom: 0;">
+            <h2>💡 Sıkça Karşılaşılan Sorunlar ve Çözümleri</h2>
+            
+            <div style="margin-top: 15px;">
+                <p><strong>Soru: "QuickNoteApp-Kur.cmd" çalıştırırken hata alıyorum / yükleme yarıda kalıyor.</strong><br>
+                <em>Çözüm:</em> <code>QuickNoteApp-Kur.cmd</code> dosyasına sağ tıklayın ve <strong>"Yönetici olarak çalıştır"</strong> seçeneğini seçin. Bazı Windows sistemlerinde yetki kısıtlamalarından dolayı sertifika yüklemesi yönetici izni gerektirebilir.</p>
+                <hr style="margin: 15px 0; border: none; border-top: 1px solid var(--beige-dark);">
+
+                <p><strong>Soru: Gemini CLI kurulu olduğu halde "Giriş Yapılmamış" veya "Eksik" görünüyor.</strong><br>
+                <em>Çözüm:</em> Gemini CLI kurulduktan sonra Windows'un ortam değişkenleri (PATH) hemen yenilenmemiş olabilir. Kurulum Sihirbazı'ndaki <strong>"Yeniden Denetle"</strong> butonuna basın ya da bilgisayarınızı yeniden başlatıp QuickNoteApp'i tekrar açın.</p>
+                <hr style="margin: 15px 0; border: none; border-top: 1px solid var(--beige-dark);">
+
+                <p><strong>Soru: Google Takvim senkronizasyonunda "Giriş gerekli" hatası alıyorum.</strong><br>
+                <em>Çözüm:</em> İnternet bağlantınızı kontrol edin. Tarayıcıda yetkilendirme yaptıktan sonra tarayıcı sekmesini hemen kapatmayın, yönlendirmenin tamamlanmasını bekleyin. Sorun devam ederse Ayarlar penceresinden "Çıkış Yap" diyerek bağlantıyı kesip tekrar bağlamayı deneyin.</p>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

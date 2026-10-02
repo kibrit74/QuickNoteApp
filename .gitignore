@@ -23,3 +23,10 @@ Thumbs.db
 # Local logs/temp
 *.log
 *.tmp
+output*.txt
+*.jsonl
+
+# Build packages & binaries
+*.msix
+*.appx
+*.zip

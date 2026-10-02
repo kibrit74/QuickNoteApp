@@ -1,4 +1,4 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
@@ -15,6 +15,7 @@ public class HotkeyManager : IDisposable
 {
     public const int NOTE_HOTKEY_ID = 1;
     public const int REVIEW_HOTKEY_ID = 2;
+    public const int QUICK_ADD_HOTKEY_ID = 3;
 
     private const int WM_HOTKEY = 0x0312;
 

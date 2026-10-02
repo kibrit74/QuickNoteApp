@@ -121,6 +121,21 @@ var tests = new (string Name, Action Test)[]
         AssertTrue(GeminiSearchIntent.ShouldUseDatabase("Veritabanindaki kayitlari ozetle"));
         AssertTrue(GeminiSearchIntent.ShouldUseDatabase("Notlarimda Omer ile ilgili mail kayitlarini ozetle"));
     }),
+    ("Akilli arama basit tek kelime aramada calismaz", () =>
+    {
+        AssertFalse(GeminiSearchIntent.ShouldUseSmartSearch("Omer"));
+        AssertFalse(GeminiSearchIntent.ShouldUseSmartSearch("#dava"));
+    }),
+    ("Akilli arama dogal dil sorusunda calisir", () =>
+    {
+        AssertTrue(GeminiSearchIntent.ShouldUseSmartSearch("Omer gecen hafta ne demisti?"));
+        AssertTrue(GeminiSearchIntent.ShouldUseSmartSearch("Temmuzdaki mahkeme notlari neler?"));
+    }),
+    ("Akilli arama bildirim odakli uzun sorguda calisir", () =>
+    {
+        AssertTrue(GeminiSearchIntent.ShouldUseSmartSearch("WhatsApp'tan gelen odeme mesajlari"));
+        AssertTrue(GeminiSearchIntent.ShouldUseSmartSearch("son gonderilen PDF dosyalari"));
+    }),
     ("Gun ozeti aramasi bildirim basligi ve govdesinde arar", () =>
     {
         var notifications = new[]
@@ -302,12 +317,36 @@ var tests = new (string Name, Action Test)[]
         db.Initialize();
 
         var receivedAt = new DateTime(2026, 7, 8, 9, 35, 0);
-        db.AddNotification("Outlook", "Cansu", "RE: Son 1 yillik tespit edilemeyen ode", receivedAt);
-        db.AddNotification("Outlook", "Cansu", "RE: Son 1 yillik tespit edilemeyen ode", receivedAt);
+        var first = db.AddNotification("Outlook", "Cansu", "RE: Son 1 yillik tespit edilemeyen ode", receivedAt);
+        var second = db.AddNotification("Outlook", "Cansu", "RE: Son 1 yillik tespit edilemeyen ode", receivedAt);
+
+        AssertTrue(first);
+        AssertFalse(second);
 
         var notifications = db.GetRecentNotifications(10);
 
         AssertEqual(1, notifications.Count);
+    }),
+    ("Outlook bildirimleri 5 dakikalik pencerede tekil kalmali", () =>
+    {
+        var dbPath = CreateTempDatabasePath();
+        var db = new DatabaseService(dbPath);
+        db.Initialize();
+
+        var time1 = new DateTime(2026, 7, 8, 9, 35, 0);
+        var time2 = time1.AddMinutes(2); // 2 dakika sonra -> kopya (5 dk icinde)
+        var time3 = time1.AddMinutes(6); // 6 dakika sonra -> farkli (5 dk disinda)
+
+        var res1 = db.AddNotification("Outlook", "Cansu", "RE: Son 1 yillik tespit edilemeyen ode", time1);
+        var res2 = db.AddNotification("Outlook", "Cansu", "RE: Son 1 yillik tespit edilemeyen ode", time2);
+        var res3 = db.AddNotification("Outlook", "Cansu", "RE: Son 1 yillik tespit edilemeyen ode", time3);
+
+        AssertTrue(res1);
+        AssertFalse(res2);
+        AssertTrue(res3);
+
+        var notifications = db.GetRecentNotifications(10);
+        AssertEqual(2, notifications.Count);
     }),
     ("Veritabani FTS not aramasi dogal dil sorusunda kaydi bulur", () =>
     {
@@ -612,6 +651,101 @@ var tests = new (string Name, Action Test)[]
         var cleaned = DictationTextCleaner.Clean(raw);
 
         AssertEqual("Küçük kurbağa küçük kurbağa kuyruğun nerede", cleaned);
+    }),
+    ("Gizli ayarlar veritabaninda sifreli saklanir ve geri okunur", () =>
+    {
+        var dbPath = CreateTempDatabasePath();
+        var db = new DatabaseService(dbPath);
+        db.Initialize();
+
+        db.SetSecret("TestSecret", "telegram-token-123");
+
+        AssertEqual("telegram-token-123", db.GetSecret("TestSecret"));
+        AssertTrue(db.GetMeta("TestSecret")?.StartsWith("dpapi:", StringComparison.Ordinal) == true);
+        AssertFalse(db.GetMeta("TestSecret") == "telegram-token-123");
+    }),
+    ("Gizli ayarlar eski duz metin degeri okuyabilir", () =>
+    {
+        var dbPath = CreateTempDatabasePath();
+        var db = new DatabaseService(dbPath);
+        db.Initialize();
+
+        db.SetMeta("LegacySecret", "eski-token");
+
+        AssertEqual("eski-token", db.GetSecret("LegacySecret"));
+    }),
+    ("MSIX paketleme scripti BOM'suz UTF8 yazar", () =>
+    {
+        var script = File.ReadAllText(FindRepoFile("QuickNoteApp", "scripts", "package-msix.ps1"));
+
+        AssertContains(script, "[System.Text.UTF8Encoding]::new($false)");
+        AssertFalse(script.Contains("[System.Text.Encoding]::UTF8", StringComparison.Ordinal));
+    }),
+    ("Otomatik yedek gunde bir kez olusur ve ayni gun tekrarlanmaz", () =>
+    {
+        var dbPath = CreateTempDatabasePath();
+        var db = new DatabaseService(dbPath);
+        db.Initialize();
+        db.AddNote("Yedek testi", "Ilk not");
+
+        var backupDir = Path.Combine(Path.GetDirectoryName(dbPath)!, "AutoBackups");
+        AutoBackupService.SetBackupDirectory(db, backupDir);
+
+        var first = AutoBackupService.RunStartupBackup(db, new DateTime(2026, 7, 14, 9, 0, 0));
+        var second = AutoBackupService.RunStartupBackup(db, new DateTime(2026, 7, 14, 18, 0, 0));
+
+        AssertTrue(first.Created);
+        AssertFalse(second.Created);
+        AssertEqual(1, Directory.GetFiles(backupDir, "*.db").Length);
+    }),
+    ("Otomatik yedek ertesi gun tekrar olusur", () =>
+    {
+        var dbPath = CreateTempDatabasePath();
+        var db = new DatabaseService(dbPath);
+        db.Initialize();
+        db.AddNote("Yedek testi", "Ilk not");
+
+        var backupDir = Path.Combine(Path.GetDirectoryName(dbPath)!, "AutoBackups");
+        AutoBackupService.SetBackupDirectory(db, backupDir);
+
+        AutoBackupService.RunStartupBackup(db, new DateTime(2026, 7, 14, 9, 0, 0));
+        var nextDay = AutoBackupService.RunStartupBackup(db, new DateTime(2026, 7, 15, 9, 0, 0));
+
+        AssertTrue(nextDay.Created);
+        AssertEqual(2, Directory.GetFiles(backupDir, "*.db").Length);
+    }),
+    ("Otomatik yedek eski dosyalari saklama sayisina gore temizler", () =>
+    {
+        var dbPath = CreateTempDatabasePath();
+        var db = new DatabaseService(dbPath);
+        db.Initialize();
+        db.AddNote("Yedek testi", "Ilk not");
+
+        var backupDir = Path.Combine(Path.GetDirectoryName(dbPath)!, "AutoBackups");
+        AutoBackupService.SetBackupDirectory(db, backupDir);
+        AutoBackupService.SetRetentionCount(db, 2);
+
+        AutoBackupService.RunStartupBackup(db, new DateTime(2026, 7, 14, 9, 0, 0));
+        AutoBackupService.RunStartupBackup(db, new DateTime(2026, 7, 15, 9, 0, 0));
+        AutoBackupService.RunStartupBackup(db, new DateTime(2026, 7, 16, 9, 0, 0));
+
+        AssertEqual(2, Directory.GetFiles(backupDir, "*.db").Length);
+    }),
+    ("Otomatik yedek son yedegi bulur", () =>
+    {
+        var dbPath = CreateTempDatabasePath();
+        var db = new DatabaseService(dbPath);
+        db.Initialize();
+        db.AddNote("Yedek testi", "Ilk not");
+
+        var backupDir = Path.Combine(Path.GetDirectoryName(dbPath)!, "AutoBackups");
+        AutoBackupService.SetBackupDirectory(db, backupDir);
+
+        AutoBackupService.RunStartupBackup(db, new DateTime(2026, 7, 14, 9, 0, 0));
+        var latestResult = AutoBackupService.RunStartupBackup(db, new DateTime(2026, 7, 15, 9, 0, 0));
+        var latestPath = AutoBackupService.GetLatestBackupPath(db);
+
+        AssertEqual(latestResult.BackupPath, latestPath);
     })
 };
 

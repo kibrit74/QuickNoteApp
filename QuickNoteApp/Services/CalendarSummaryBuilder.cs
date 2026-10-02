@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using QuickNoteApp.Models;
 
 namespace QuickNoteApp.Services;
@@ -45,6 +45,42 @@ public static class CalendarSummaryBuilder
                     : calendarEvent.StartTime.ToString("dd.MM.yyyy HH:mm");
                 builder.AppendLine($"- [{prefix}] {calendarEvent.Summary}");
             }
+        }
+
+        return builder.ToString().Trim();
+    }
+
+    public static string BuildRange(
+        DateTime startDate,
+        int days,
+        IEnumerable<CalendarEvent>? events)
+    {
+        var builder = new StringBuilder();
+        var allEvents = (events ?? Enumerable.Empty<CalendarEvent>())
+            .OrderBy(calendarEvent => calendarEvent.StartTime)
+            .ToList();
+
+        builder.AppendLine($"Takvim ozeti ({days} Gunluk) - Baslangic: {startDate:dd.MM.yyyy}");
+        builder.AppendLine();
+
+        for (int i = 0; i < days; i++)
+        {
+            var date = startDate.AddDays(i);
+            var dayEvents = allEvents.Where(e => e.StartTime.Date == date.Date).ToList();
+
+            builder.AppendLine($"{date:dd.MM.yyyy, dddd}:");
+            if (dayEvents.Count == 0)
+            {
+                builder.AppendLine("- Bu gun icin etkinlik bulunmuyor.");
+            }
+            else
+            {
+                foreach (var e in dayEvents)
+                {
+                    builder.AppendLine(e.FormatForReport());
+                }
+            }
+            builder.AppendLine();
         }
 
         return builder.ToString().Trim();

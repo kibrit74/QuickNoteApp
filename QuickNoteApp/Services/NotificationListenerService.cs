@@ -62,13 +62,15 @@ public class NotificationListenerService : IDisposable
             StatusText = "Windows bildirim izni isteniyor...";
             var accessStatus = await _listener.RequestAccessAsync();
 
-            if (accessStatus != UserNotificationListenerAccessStatus.Allowed)
+            if (accessStatus != UserNotificationListenerAccessStatus.Allowed || !IsRunningAsPackaged())
             {
                 _isActive = false;
                 if (TryStartOutlookFallback())
                     return;
 
-                StatusText = "Windows bildirim erişimi kapalı. Ayarlar bölümünden tekrar izin isteyebilirsiniz.";
+                StatusText = IsRunningAsPackaged()
+                    ? "Windows bildirim erişimi kapalı. Ayarlar bölümünden tekrar izin isteyebilirsiniz."
+                    : "Windows bildirim erişimi bu sürümde desteklenmiyor. MSIX paketli sürüm gerekiyor.";
                 return;
             }
 
@@ -225,7 +227,8 @@ public class NotificationListenerService : IDisposable
     {
         try
         {
-            var appName = GetSafeAppName(notification);
+            var rawAppName = GetSafeAppName(notification);
+            var appName = NotificationFilter.GetCanonicalAppName(rawAppName);
             var (title, body) = GetSafeNotificationText(notification);
 
             if (string.IsNullOrWhiteSpace(title) && string.IsNullOrWhiteSpace(body))
@@ -286,10 +289,17 @@ public class NotificationListenerService : IDisposable
             if (!string.IsNullOrWhiteSpace(displayName))
                 return displayName;
         }
-        catch (NotImplementedException)
+        catch
         {
         }
-        catch (COMException)
+
+        try
+        {
+            var appId = notification.AppInfo?.Id;
+            if (!string.IsNullOrWhiteSpace(appId))
+                return appId;
+        }
+        catch
         {
         }
 
@@ -299,10 +309,7 @@ public class NotificationListenerService : IDisposable
             if (!string.IsNullOrWhiteSpace(packageName))
                 return packageName;
         }
-        catch (NotImplementedException)
-        {
-        }
-        catch (COMException)
+        catch
         {
         }
 

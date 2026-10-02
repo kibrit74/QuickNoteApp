@@ -1,4 +1,4 @@
-﻿<Application x:Class="QuickNoteApp.App"
+<Application x:Class="QuickNoteApp.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:QuickNoteApp">
@@ -40,6 +40,8 @@
         <SolidColorBrush x:Key="WarningPanelBrush" Color="#1C1A14" />
         <SolidColorBrush x:Key="WarningBorderBrush" Color="#3D3520" />
         <SolidColorBrush x:Key="TimeBadgeBrush" Color="#1A1D28" />
+        <SolidColorBrush x:Key="GlassmorphicBgBrush" Color="#0FFFFFFF" />
+        <SolidColorBrush x:Key="GlassmorphicBorderBrush" Color="#258B6CFF" />
         <LinearGradientBrush x:Key="AccentGradient" StartPoint="0,0" EndPoint="1,1">
             <GradientStop Color="#7C5CFF" Offset="0" />
             <GradientStop Color="#35BDF6" Offset="1" />

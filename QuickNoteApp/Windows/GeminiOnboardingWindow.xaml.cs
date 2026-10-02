@@ -8,8 +8,8 @@ namespace QuickNoteApp.Windows;
 public partial class GeminiOnboardingWindow : Window
 {
     private const string NodeInstallCommand = "winget install --id OpenJS.NodeJS.LTS --source winget";
-    private const string InstallCommand = "npm install -g @google/gemini-cli@latest";
-    private const string LoginCommand = "gemini";
+    private const string InstallCommand = "agy";
+    private const string LoginCommand = "agy";
 
     private static readonly string StateDirectory = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
@@ -50,12 +50,12 @@ public partial class GeminiOnboardingWindow : Window
                 UseShellExecute = true
             });
 
-            CopyStatusText.Text = "Kurulum penceresi açıldı. İşlem bitince terminalde gemini yazıp Google oturumu aç.";
+            CopyStatusText.Text = "Kontrol penceresi açıldı. İşlem bitince terminalde agy yazıp oturum açın.";
         }
         catch (Exception ex)
         {
-            CopyToClipboard(InstallCommand, "Kurulum penceresi açılamadı. Komut panoya kopyalandı.");
-            System.Windows.MessageBox.Show(this, ex.Message, "Gemini CLI kurulumu açılamadı", MessageBoxButton.OK, MessageBoxImage.Warning);
+            CopyToClipboard(InstallCommand, "Pencere açılamadı. Komut panoya kopyalandı.");
+            System.Windows.MessageBox.Show(this, ex.Message, "Antigravity CLI (agy) kurulumu açılamadı", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
     }
 
@@ -88,8 +88,8 @@ public partial class GeminiOnboardingWindow : Window
     private void RefreshGeminiStatus()
     {
         GeminiStatusText.Text = GeminiCliService.IsGeminiCliAvailable()
-            ? "Gemini CLI bulundu. Oturum açtıysan QuickNoteApp hazır."
-            : "Gemini CLI henüz bulunamadı. Önce kurulum ve Google oturumu adımlarını tamamla.";
+            ? "Antigravity CLI (agy) bulundu. QuickNoteApp hazır."
+            : "Antigravity CLI (agy) henüz bulunamadı. Lütfen agy kurulumunu tamamlayın.";
     }
 
     private void CopyToClipboard(string text, string status)

@@ -1,0 +1,215 @@
+<Window x:Class="QuickNoteApp.Windows.SetupWizardWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="QuickNote — İlk Kurulum Sihirbazı"
+        Width="680"
+        Height="620"
+        MinWidth="640"
+        MinHeight="550"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="CanResize"
+        Background="{DynamicResource BgDeepBrush}">
+    <Border Margin="16"
+            Padding="18"
+            CornerRadius="10"
+            Background="{DynamicResource BgCardBrush}"
+            BorderBrush="{DynamicResource BorderSoftBrush}"
+            BorderThickness="1">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- Header -->
+            <StackPanel Grid.Row="0" Margin="0,0,0,16">
+                <TextBlock Text="QuickNote'a Hoş Geldiniz!"
+                           Foreground="{DynamicResource TextPrimaryBrush}"
+                           FontSize="24"
+                           FontWeight="Bold"
+                           TextWrapping="Wrap" />
+                <TextBlock Text="Notlarınızı yapay zeka ile uçurmadan önce sistem gereksinimlerini ve izinleri yapılandıralım."
+                           Foreground="{DynamicResource TextSecondaryBrush}"
+                           FontSize="13.5"
+                           Margin="0,6,0,0"
+                           TextWrapping="Wrap" />
+            </StackPanel>
+
+            <!-- Steps List -->
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                <StackPanel Margin="0,0,4,0">
+                    
+                    <!-- 1. Gemini CLI / AGY -->
+                    <Border Background="{DynamicResource SubtleSurfaceBrush}"
+                            BorderBrush="{DynamicResource BorderSoftBrush}"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Padding="12"
+                            Margin="0,0,0,12">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                <TextBlock Text="1. Antigravity CLI (agy) Durumu" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="14.5" FontWeight="Bold" />
+                                <TextBlock Text="Ses kaydını yazıya çevirme, akıllı arama ve özetleme özellikleri için gereklidir." Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" Margin="0,2,0,6" TextWrapping="Wrap" />
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Ellipse x:Name="GeminiCliDot" Width="10" Height="10" Fill="#778196" Margin="0,0,6,0" VerticalAlignment="Center" />
+                                    <TextBlock x:Name="GeminiCliText" Text="Denetleniyor..." Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </StackPanel>
+                            <Button x:Name="GeminiCliBtn" Grid.Column="1" Content="Kur" Style="{StaticResource TagFilterButtonStyle}" MinWidth="90" Height="28" Padding="12,0" VerticalAlignment="Center" Click="GeminiCliBtn_Click" Visibility="Collapsed" />
+                        </Grid>
+                    </Border>
+
+                    <!-- 2. AGY CLI Giriş -->
+                    <Border Background="{DynamicResource SubtleSurfaceBrush}"
+                            BorderBrush="{DynamicResource BorderSoftBrush}"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Padding="12"
+                            Margin="0,0,0,12">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                <TextBlock Text="2. Antigravity CLI (agy) Oturumu" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="14.5" FontWeight="Bold" />
+                                <TextBlock Text="Antigravity CLI (agy) aracının yetkilendirilmiş olması gerekir." Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" Margin="0,2,0,6" TextWrapping="Wrap" />
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Ellipse x:Name="GeminiLoginDot" Width="10" Height="10" Fill="#778196" Margin="0,0,6,0" VerticalAlignment="Center" />
+                                    <TextBlock x:Name="GeminiLoginText" Text="Denetleniyor..." Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </StackPanel>
+                            <Button x:Name="GeminiLoginBtn" Grid.Column="1" Content="Bağlan" Style="{StaticResource TagFilterButtonStyle}" MinWidth="90" Height="28" Padding="12,0" VerticalAlignment="Center" Click="GeminiLoginBtn_Click" Visibility="Collapsed" />
+                        </Grid>
+                    </Border>
+
+                    <!-- 3. Google Takvim -->
+                    <Border Background="{DynamicResource SubtleSurfaceBrush}"
+                            BorderBrush="{DynamicResource BorderSoftBrush}"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Padding="12"
+                            Margin="0,0,0,12">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                <TextBlock Text="3. Google Takvim Bağlantısı" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="14.5" FontWeight="Bold" />
+                                <TextBlock Text="Akıllı takvim sorguları ve toplantı hatırlatıcıları senkronizasyonu içindir." Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" Margin="0,2,0,6" TextWrapping="Wrap" />
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Ellipse x:Name="CalendarDot" Width="10" Height="10" Fill="#778196" Margin="0,0,6,0" VerticalAlignment="Center" />
+                                    <TextBlock x:Name="CalendarText" Text="Denetleniyor..." Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </StackPanel>
+                            <Button x:Name="CalendarBtn" Grid.Column="1" Content="Bağlan" Style="{StaticResource TagFilterButtonStyle}" MinWidth="90" Height="28" Padding="12,0" VerticalAlignment="Center" Click="CalendarBtn_Click" Visibility="Collapsed" />
+                        </Grid>
+                    </Border>
+
+                    <!-- 4. Mikrofon İzni -->
+                    <Border Background="{DynamicResource SubtleSurfaceBrush}"
+                            BorderBrush="{DynamicResource BorderSoftBrush}"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Padding="12"
+                            Margin="0,0,0,12">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                <TextBlock Text="4. Mikrofon İzni" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="14.5" FontWeight="Bold" />
+                                <TextBlock Text="Sesli not alma ve dikte özellikleri için mikrofon erişimi gerekir." Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" Margin="0,2,0,6" TextWrapping="Wrap" />
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Ellipse x:Name="MicrophoneDot" Width="10" Height="10" Fill="#778196" Margin="0,0,6,0" VerticalAlignment="Center" />
+                                    <TextBlock x:Name="MicrophoneText" Text="Denetleniyor..." Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </StackPanel>
+                            <Button x:Name="MicrophoneBtn" Grid.Column="1" Content="İzin Ver" Style="{StaticResource TagFilterButtonStyle}" MinWidth="90" Height="28" Padding="12,0" VerticalAlignment="Center" Click="MicrophoneBtn_Click" Visibility="Collapsed" />
+                        </Grid>
+                    </Border>
+
+                    <!-- 5. Windows Bildirim İzni -->
+                    <Border Background="{DynamicResource SubtleSurfaceBrush}"
+                            BorderBrush="{DynamicResource BorderSoftBrush}"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Padding="12"
+                            Margin="0,0,0,12">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                <TextBlock Text="5. Windows Bildirim Dinleme İzni" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="14.5" FontWeight="Bold" />
+                                <TextBlock Text="WhatsApp, Outlook gibi uygulamaların bildirimlerini yakalayıp özetleyebilmek içindir." Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" Margin="0,2,0,6" TextWrapping="Wrap" />
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Ellipse x:Name="NotificationDot" Width="10" Height="10" Fill="#778196" Margin="0,0,6,0" VerticalAlignment="Center" />
+                                    <TextBlock x:Name="NotificationText" Text="Denetleniyor..." Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </StackPanel>
+                            <Button x:Name="NotificationBtn" Grid.Column="1" Content="İzin Ver" Style="{StaticResource TagFilterButtonStyle}" MinWidth="90" Height="28" Padding="12,0" VerticalAlignment="Center" Click="NotificationBtn_Click" Visibility="Collapsed" />
+                        </Grid>
+                    </Border>
+
+                    <!-- 6. Outlook (Opsiyonel Bilgi) -->
+                    <Border Background="{DynamicResource SubtleSurfaceBrush}"
+                            BorderBrush="{DynamicResource BorderSoftBrush}"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Padding="12">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                <TextBlock Text="6. Masaüstü Outlook Durumu (Opsiyonel)" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="14.5" FontWeight="Bold" />
+                                <TextBlock Text="Notlarınızı doğrudan taslak e-posta olarak gönderme özelliği için kullanılır." Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" Margin="0,2,0,6" TextWrapping="Wrap" />
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Ellipse x:Name="OutlookDot" Width="10" Height="10" Fill="#778196" Margin="0,0,6,0" VerticalAlignment="Center" />
+                                    <TextBlock x:Name="OutlookText" Text="Denetleniyor..." Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- Bottom Buttons -->
+            <DockPanel Grid.Row="2" Margin="0,16,0,0" LastChildFill="False">
+                <Button x:Name="RecheckBtn"
+                        DockPanel.Dock="Left"
+                        Content="🔄 Yeniden Denetle"
+                        MinWidth="150"
+                        Height="36"
+                        Style="{StaticResource CompactActionButton}"
+                        Click="RecheckBtn_Click" />
+                <Button x:Name="StartAppBtn"
+                        DockPanel.Dock="Right"
+                        Content="🚀 QuickNote'u Başlat"
+                        MinWidth="180"
+                        Height="36"
+                        Style="{StaticResource PrimaryButton}"
+                        Click="StartAppBtn_Click" />
+                <Button x:Name="SkipBtn"
+                        DockPanel.Dock="Right"
+                        Content="Kurulumu Geç"
+                        MinWidth="120"
+                        Height="36"
+                        Margin="0,0,8,0"
+                        Style="{StaticResource CompactActionButton}"
+                        Click="SkipBtn_Click" />
+            </DockPanel>
+        </Grid>
+    </Border>
+</Window>

@@ -1542,11 +1542,26 @@
 
                                             <WrapPanel>
 
-                                                <Button Content="Resim" ToolTip="Resim seç" Style="{StaticResource CompactActionButton}" Click="ChooseImageButton_Click" />
+                                                <Button ToolTip="Resim seç" Style="{StaticResource CompactActionButton}" Click="ChooseImageButton_Click">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" Text="&#xEB9F;" FontSize="14" Margin="0,0,6,0" VerticalAlignment="Center" />
+                                                        <TextBlock Text="Resim" VerticalAlignment="Center" />
+                                                    </StackPanel>
+                                                </Button>
 
-                                                <Button Content="Pano" ToolTip="Panodaki resmi al" Style="{StaticResource CompactActionButton}" Click="PasteImageButton_Click" />
+                                                <Button ToolTip="Panodaki resmi al" Style="{StaticResource CompactActionButton}" Click="PasteImageButton_Click">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" Text="&#xE77F;" FontSize="14" Margin="0,0,6,0" VerticalAlignment="Center" />
+                                                        <TextBlock Text="Pano" VerticalAlignment="Center" />
+                                                    </StackPanel>
+                                                </Button>
 
-                                                <Button Content="Dosya" ToolTip="Dosya ekle" Style="{StaticResource CompactActionButton}" Click="ChooseFileButton_Click" />
+                                                <Button ToolTip="Dosya ekle" Style="{StaticResource CompactActionButton}" Click="ChooseFileButton_Click">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" Text="&#xE8E5;" FontSize="14" Margin="0,0,6,0" VerticalAlignment="Center" />
+                                                        <TextBlock Text="Dosya" VerticalAlignment="Center" />
+                                                    </StackPanel>
+                                                </Button>
 
                                             </WrapPanel>
 
@@ -1564,19 +1579,57 @@
 
                                             <WrapPanel>
 
-                                                <Button Content="AI Analiz" MinWidth="76" ToolTip="Gemini ile analiz et" Style="{StaticResource CompactActionButton}" Click="GeminiButton_Click" />
+                                                <Button MinWidth="76" ToolTip="Gemini ile analiz et" Style="{StaticResource CompactActionButton}" Click="GeminiButton_Click">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" Text="&#xECA5;" FontSize="14" Margin="0,0,6,0" VerticalAlignment="Center" Foreground="#10b981" />
+                                                        <TextBlock Text="AI Analiz" VerticalAlignment="Center" />
+                                                    </StackPanel>
+                                                </Button>
 
-                                                <Button Content="Excel" ToolTip="Excel'e aktar" Style="{StaticResource CompactActionButton}" Click="ExportGeminiCsvButton_Click" />
+                                                <Button ToolTip="Excel'e aktar" Style="{StaticResource CompactActionButton}" Click="ExportGeminiCsvButton_Click">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" Text="&#xE8FC;" FontSize="14" Margin="0,0,6,0" VerticalAlignment="Center" />
+                                                        <TextBlock Text="Excel" VerticalAlignment="Center" />
+                                                    </StackPanel>
+                                                </Button>
 
-                                                <Button Content="Mail" ToolTip="Mail gönder" Style="{StaticResource CompactActionButton}" Click="EmailButton_Click" />
+                                                <Button ToolTip="Mail gönder" Style="{StaticResource CompactActionButton}" Click="EmailButton_Click">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" Text="&#xE715;" FontSize="14" Margin="0,0,6,0" VerticalAlignment="Center" />
+                                                        <TextBlock Text="Mail" VerticalAlignment="Center" />
+                                                    </StackPanel>
+                                                </Button>
 
-                                                <Button Content="Gün Özeti" MinWidth="82" ToolTip="Gün özetini aç" Style="{StaticResource CompactActionButton}" Click="OpenReviewButton_Click" />
+                                                <Button MinWidth="82" ToolTip="Gün özetini aç" Style="{StaticResource CompactActionButton}" Click="OpenReviewButton_Click">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" Text="&#xE154;" FontSize="14" Margin="0,0,6,0" VerticalAlignment="Center" />
+                                                        <TextBlock Text="Gün Özeti" VerticalAlignment="Center" />
+                                                    </StackPanel>
+                                                </Button>
 
-                                                <Button Content="Takvim" ToolTip="Takvimi goster" Style="{StaticResource CompactActionButton}" Click="TakvimButton_Click" />
+                                                <Button ToolTip="Takvimi goster" Style="{StaticResource CompactActionButton}" Click="TakvimButton_Click">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" Text="&#xE787;" FontSize="14" Margin="0,0,6,0" VerticalAlignment="Center" />
+                                                        <TextBlock Text="Takvim" VerticalAlignment="Center" />
+                                                    </StackPanel>
+                                                </Button>
 
-                                                <Button Content="Plan" ToolTip="Görev planı üret" Style="{StaticResource CompactActionButton}" Click="GenerateTaskListButton_Click" />
+                                                <Button ToolTip="Görev planı üret" Style="{StaticResource CompactActionButton}" Click="GenerateTaskListButton_Click">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" Text="&#xE81C;" FontSize="14" Margin="0,0,6,0" VerticalAlignment="Center" />
+                                                        <TextBlock Text="Plan" VerticalAlignment="Center" />
+                                                    </StackPanel>
+                                                </Button>
 
-                                                <Button x:Name="DictateButton" Content="Dikte" ToolTip="Sesle dikte et" Style="{StaticResource CompactActionButton}" Click="DictateButton_Click" />
+                                                <StackPanel Orientation="Horizontal">
+                                                    <Button x:Name="DictateButton" Margin="0,0,5,0" ToolTip="Sesle dikte et (Otomatik kapanır)" Style="{StaticResource CompactActionButton}" Click="DictateButton_Click">
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" Text="&#xE720;" FontSize="14" Margin="0,0,6,0" VerticalAlignment="Center" />
+                                                            <TextBlock x:Name="DictateButtonText" Text="Dikte" VerticalAlignment="Center" />
+                                                        </StackPanel>
+                                                    </Button>
+                                                    <ProgressBar x:Name="AudioVolumeBar" Width="50" Height="4" Visibility="Collapsed" Maximum="1.0" Foreground="#10b981" Background="#2A2A35" BorderThickness="0"/>
+                                                </StackPanel>
 
                                             </WrapPanel>
 
@@ -1802,87 +1855,97 @@
 
 
 
-                                <!-- Notification Status Card -->
-
+                                <!-- Keyboard Shortcuts Card -->
                                 <Border Style="{StaticResource DashboardCardStyle}" Margin="0,0,0,16">
-
                                     <StackPanel>
+                                        <TextBlock Text="Klavye Kısayolları" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="15" FontWeight="Bold" Margin="0,0,0,6" />
+                                        <TextBlock Text="Uygulamada hızlı erişim için tanımlanmış sistem genelindeki ve pencere içi kısayollar." Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12.5" Margin="0,0,0,16" TextWrapping="Wrap" />
 
+                                        <Grid Margin="0,0,0,4">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="200" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+
+                                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Ctrl + Shift + N" Foreground="{DynamicResource AccentCyanBrush}" FontWeight="SemiBold" FontSize="13" Margin="0,0,0,8" />
+                                            <TextBlock Grid.Row="0" Grid.Column="1" Text="Ana not penceresini göster / gizle" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13" Margin="0,0,0,8" />
+
+                                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Ctrl + N  (veya Ctrl+Shift+Q)" Foreground="{DynamicResource AccentCyanBrush}" FontWeight="SemiBold" FontSize="13" Margin="0,0,0,8" />
+                                            <TextBlock Grid.Row="1" Grid.Column="1" Text="Hızlı not ekleme penceresini aç" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13" Margin="0,0,0,8" />
+
+                                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Ctrl + Shift + R" Foreground="{DynamicResource AccentCyanBrush}" FontWeight="SemiBold" FontSize="13" Margin="0,0,0,8" />
+                                            <TextBlock Grid.Row="2" Grid.Column="1" Text="Gün sonu özetini göster" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13" Margin="0,0,0,8" />
+
+                                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Ctrl + S  (veya Ctrl + Enter)" Foreground="{DynamicResource AccentCyanBrush}" FontWeight="SemiBold" FontSize="13" Margin="0,0,0,4" />
+                                            <TextBlock Grid.Row="3" Grid.Column="1" Text="Hızlı notu kaydet (pencerede)" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13" Margin="0,0,0,4" />
+                                        </Grid>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Notification Status Card -->
+                                <Border Style="{StaticResource DashboardCardStyle}" Margin="0,0,0,16">
+                                    <StackPanel>
                                         <TextBlock Text="Bildirim Servisi Durumu" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="15" FontWeight="Bold" Margin="0,0,0,6" />
-
                                         <TextBlock Text="Windows bildirimlerini ve Outlook yedek akış durumunu buradan takip edebilirsiniz." Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12.5" Margin="0,0,0,16" />
-
                                         
-
                                         <Border Background="{DynamicResource SubtleSurfaceBrush}" BorderBrush="{DynamicResource BorderSoftBrush}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,16">
-
                                             <StackPanel>
-
                                                 <!-- Status Indicator Row -->
-
                                                 <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
-
                                                     <Ellipse x:Name="NotificationStatusDot" Width="12" Height="12" Fill="#778196" Margin="0,0,8,0" VerticalAlignment="Center" />
-
                                                     <TextBlock x:Name="NotificationStatusText" Text="Bildirim servisi başlatılmadı." Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13.5" FontWeight="SemiBold" VerticalAlignment="Center" />
-
                                                 </StackPanel>
-
                                                 
-
                                                 <Separator Background="{DynamicResource BorderSoftBrush}" Margin="0,0,0,12" Height="1" />
-
                                                 
-
                                                 <!-- Stats Grid -->
-
                                                 <Grid>
-
                                                     <Grid.ColumnDefinitions>
-
                                                         <ColumnDefinition Width="Auto" />
-
                                                         <ColumnDefinition Width="*" />
-
                                                     </Grid.ColumnDefinitions>
-
                                                     <Grid.RowDefinitions>
-
                                                         <RowDefinition Height="Auto" />
-
                                                         <RowDefinition Height="Auto" />
-
                                                     </Grid.RowDefinitions>
-
                                                     
-
                                                     <TextBlock Grid.Row="0" Grid.Column="0" Text="Bugün Yakalanan:" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12.5" />
-
                                                     <TextBlock x:Name="CapturedTodayCountText" Grid.Row="0" Grid.Column="1" Text="0 adet" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="12.5" FontWeight="SemiBold" HorizontalAlignment="Right" />
-
                                                     
-
                                                     <TextBlock Grid.Row="1" Grid.Column="0" Text="Son Yakalanan:" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12.5" Margin="0,8,0,0" />
-
                                                     <TextBlock x:Name="LastNotificationTimeText" Grid.Row="1" Grid.Column="1" Text="Henüz bildirim yok" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="12.5" FontWeight="SemiBold" HorizontalAlignment="Right" Margin="0,8,0,0" />
-
                                                 </Grid>
-
                                             </StackPanel>
-
                                         </Border>
-
                                         
-
                                         <WrapPanel>
-
                                             <Button Content="Bildirim İznini Aç" MinWidth="140" Height="30" Margin="0,0,8,0" Style="{StaticResource PrimaryButton}" Click="RequestNotificationAccessButton_Click" />
                                             <Button Content="Gereksiz Bildirimleri Temizle" MinWidth="180" Height="30" Margin="0,0,8,0" Style="{StaticResource CompactActionButton}" Click="CleanOldNotificationsButton_Click" />
-
                                         </WrapPanel>
-
                                     </StackPanel>
+                                </Border>
 
+                                <!-- Notification App Filters Card -->
+                                <Border Style="{StaticResource DashboardCardStyle}" Margin="0,0,0,16">
+                                    <StackPanel>
+                                        <TextBlock Text="Bildirim Filtresi" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="15" FontWeight="Bold" Margin="0,0,0,6" />
+                                        <TextBlock Text="Hangi uygulamalardan gelen bildirimlerin otomatik olarak nota dönüştürüleceğini seçin." Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12.5" Margin="0,0,0,16" TextWrapping="Wrap" />
+
+                                        <WrapPanel Margin="0,0,0,8">
+                                            <CheckBox x:Name="FilterOutlookCheckBox" Content="Outlook" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13" Margin="0,0,20,12" Checked="NotificationFilterCheckBox_Changed" Unchecked="NotificationFilterCheckBox_Changed" />
+                                            <CheckBox x:Name="FilterWhatsAppCheckBox" Content="WhatsApp" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13" Margin="0,0,20,12" Checked="NotificationFilterCheckBox_Changed" Unchecked="NotificationFilterCheckBox_Changed" />
+                                            <CheckBox x:Name="FilterTeamsCheckBox" Content="Microsoft Teams" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13" Margin="0,0,20,12" Checked="NotificationFilterCheckBox_Changed" Unchecked="NotificationFilterCheckBox_Changed" />
+                                            <CheckBox x:Name="FilterSlackCheckBox" Content="Slack" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13" Margin="0,0,20,12" Checked="NotificationFilterCheckBox_Changed" Unchecked="NotificationFilterCheckBox_Changed" />
+                                            <CheckBox x:Name="FilterTelegramCheckBox" Content="Telegram" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13" Margin="0,0,20,12" Checked="NotificationFilterCheckBox_Changed" Unchecked="NotificationFilterCheckBox_Changed" />
+                                            <CheckBox x:Name="FilterGmailCheckBox" Content="Gmail" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13" Margin="0,0,20,12" Checked="NotificationFilterCheckBox_Changed" Unchecked="NotificationFilterCheckBox_Changed" />
+                                        </WrapPanel>
+                                    </StackPanel>
                                 </Border>
 
                                 <!-- Gemini CLI Setup Card -->
@@ -1910,6 +1973,18 @@
                                         </WrapPanel>
                                     </StackPanel>
                                 </Border>
+
+                                <!-- AI & Dictation Refiner Card -->
+                                <Border Style="{StaticResource DashboardCardStyle}" Margin="0,0,0,16">
+                                    <StackPanel>
+                                        <TextBlock Text="Yapay Zeka ve Dikte Ayarları" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="15" FontWeight="Bold" Margin="0,0,0,6" />
+                                        <TextBlock Text="Ses notlarınızın yapay zeka ile otomatik düzenlenmesi ve metin yazım ayarları." Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12.5" Margin="0,0,0,16" TextWrapping="Wrap" />
+
+                                        <CheckBox x:Name="EnableDictationRefinerCheckBox" Content="Telegram Ses Kayıtlarını AI (Gemini) ile İyileştir" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13" Margin="0,0,0,6" Checked="EnableDictationRefinerCheckBox_Changed" Unchecked="EnableDictationRefinerCheckBox_Changed" />
+                                        <TextBlock Text="Açık olduğunda, Telegram üzerinden gönderilen sesli notlar Gemini AI kullanılarak dil bilgisi ve akıcılık açısından otomatik iyileştirilir." Foreground="{DynamicResource TextMutedBrush}" FontSize="11.5" TextWrapping="Wrap" Margin="24,0,0,0" />
+                                    </StackPanel>
+                                </Border>
+
                                 <!-- Google Calendar Status Card -->
                                 <Border Style="{StaticResource DashboardCardStyle}" Margin="0,0,0,16">
                                     <StackPanel>
@@ -1948,6 +2023,140 @@
                                         
                                         <WrapPanel>
                                             <Button Content="Takvimi Şimdi Eşitle" MinWidth="180" Height="30" Margin="0,0,8,0" Style="{StaticResource CompactActionButton}" Click="SyncCalendarButton_Click" />
+                                        </WrapPanel>
+                                    </StackPanel>
+                                </Border>
+
+                                 <!-- Telegram Bot Integration Card -->
+                                <Border Style="{StaticResource DashboardCardStyle}" Margin="0,0,0,16">
+                                    <StackPanel>
+                                        <TextBlock Text="Telegram Bot Entegrasyonu" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="15" FontWeight="Bold" Margin="0,0,0,6" />
+                                        <TextBlock Text="Cep telefonunuzdan bu bota mesaj veya ses kaydı göndererek doğrudan QuickNote'a not ekleyebilirsiniz." Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12.5" Margin="0,0,0,16" TextWrapping="Wrap" />
+
+                                        <!-- Input Fields -->
+                                        <Grid Margin="0,0,0,12">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="130" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <!-- Bot Token Row -->
+                                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Bot Token:" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13" VerticalAlignment="Center" Margin="0,0,0,8" />
+                                            <PasswordBox x:Name="TelegramTokenInput" Grid.Row="0" Grid.Column="1" Height="28" Margin="0,0,0,8" Background="{DynamicResource BgInputBrush}" Foreground="{DynamicResource TextPrimaryBrush}" BorderBrush="{DynamicResource BorderSoftBrush}" VerticalContentAlignment="Center" Padding="6,0" />
+
+                                            <!-- Chat ID Row -->
+                                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Chat ID:" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13" VerticalAlignment="Center" />
+                                            <Grid Grid.Row="1" Grid.Column="1">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBox x:Name="TelegramChatIdInput" Grid.Column="0" Height="28" Background="{DynamicResource BgInputBrush}" Foreground="{DynamicResource TextPrimaryBrush}" BorderBrush="{DynamicResource BorderSoftBrush}" VerticalContentAlignment="Center" Padding="6,0" />
+                                                <Button x:Name="TelegramLearnChatIdBtn" Grid.Column="1" Content="Chat ID Keşfet" Style="{StaticResource TagFilterButtonStyle}" Height="28" Margin="8,0,0,0" Padding="10,0" Click="TelegramLearnChatIdBtn_Click" />
+                                            </Grid>
+                                        </Grid>
+
+                                        <!-- Status Panel -->
+                                        <Border Background="{DynamicResource SubtleSurfaceBrush}" BorderBrush="{DynamicResource BorderSoftBrush}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,16">
+                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                <Ellipse x:Name="TelegramStatusDot" Width="10" Height="10" Fill="#778196" Margin="0,0,8,0" VerticalAlignment="Center" />
+                                                <TextBlock x:Name="TelegramStatusText" Text="Devre Dışı" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13.5" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                            </StackPanel>
+                                        </Border>
+
+                                        <!-- Action Buttons -->
+                                        <WrapPanel>
+                                            <Button x:Name="TelegramSaveBtn" Content="💾 Kaydet ve Başlat" MinWidth="150" Height="30" Margin="0,0,8,0" Style="{StaticResource PrimaryButton}" Click="TelegramSaveBtn_Click" />
+                                            <Button x:Name="TelegramStopBtn" Content="🛑 Servisi Durdur" MinWidth="130" Height="30" Style="{StaticResource CompactActionButton}" Click="TelegramStopBtn_Click" />
+                                        </WrapPanel>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Auto Backup Card -->
+                                <Border Style="{StaticResource DashboardCardStyle}" Margin="0,0,0,16">
+                                    <StackPanel>
+                                        <TextBlock Text="Otomatik Yedekleme" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="15" FontWeight="Bold" Margin="0,0,0,6" />
+                                        <TextBlock Text="Veritabanınızın otomatik yedeklenme konumunu ve saklama politikalarını yapılandırın." Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12.5" Margin="0,0,0,16" TextWrapping="Wrap" />
+
+                                        <Grid Margin="0,0,0,12">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="130" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <!-- Backup Directory -->
+                                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Yedek Klasörü:" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13" VerticalAlignment="Center" Margin="0,0,0,8" />
+                                            <Grid Grid.Row="0" Grid.Column="1" Margin="0,0,0,8">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBox x:Name="BackupDirInput" Grid.Column="0" Height="28" Background="{DynamicResource BgInputBrush}" Foreground="{DynamicResource TextPrimaryBrush}" BorderBrush="{DynamicResource BorderSoftBrush}" VerticalContentAlignment="Center" Padding="6,0" />
+                                                <Button x:Name="BackupBrowseBtn" Grid.Column="1" Content="Gözat..." Style="{StaticResource TagFilterButtonStyle}" Height="28" Margin="8,0,0,0" Padding="10,0" Click="BackupBrowseBtn_Click" />
+                                            </Grid>
+
+                                            <!-- Retention Count -->
+                                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Saklama Sayısı:" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13" VerticalAlignment="Center" />
+                                            <TextBox x:Name="BackupRetentionInput" Grid.Row="1" Grid.Column="1" Width="100" HorizontalAlignment="Left" Height="28" Background="{DynamicResource BgInputBrush}" Foreground="{DynamicResource TextPrimaryBrush}" BorderBrush="{DynamicResource BorderSoftBrush}" VerticalContentAlignment="Center" Padding="6,0" />
+                                        </Grid>
+
+                                        <!-- Backup Info -->
+                                        <Border Background="{DynamicResource SubtleSurfaceBrush}" BorderBrush="{DynamicResource BorderSoftBrush}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,16">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <TextBlock Grid.Column="0" Text="Son Yedek Dosyası:" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12.5" />
+                                                <TextBlock x:Name="LastBackupPathText" Grid.Column="1" Text="Henüz yedek alınmadı" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="12.5" FontWeight="SemiBold" HorizontalAlignment="Right" TextTrimming="CharacterEllipsis" Margin="8,0,0,0" />
+                                            </Grid>
+                                        </Border>
+
+                                        <WrapPanel>
+                                            <Button Content="💾 Ayarları Kaydet" MinWidth="140" Height="30" Margin="0,0,8,0" Style="{StaticResource PrimaryButton}" Click="SaveBackupSettingsBtn_Click" />
+                                            <Button Content="⚡ Şimdi Yedek Al" MinWidth="130" Height="30" Margin="0,0,8,0" Style="{StaticResource CompactActionButton}" Click="BackupNowBtn_Click" />
+                                            <Button Content="📁 Klasörü Aç" MinWidth="110" Height="30" Style="{StaticResource CompactActionButton}" Click="OpenBackupFolderBtn_Click" />
+                                        </WrapPanel>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Data Management Card -->
+                                <Border Style="{StaticResource DashboardCardStyle}" Margin="0,0,0,16">
+                                    <StackPanel>
+                                        <TextBlock Text="Veri Yönetimi" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="15" FontWeight="Bold" Margin="0,0,0,6" />
+                                        <TextBlock Text="Uygulama veritabanı durumunu görün ve verilerinizi yönetin." Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12.5" Margin="0,0,0,16" TextWrapping="Wrap" />
+
+                                        <Border Background="{DynamicResource SubtleSurfaceBrush}" BorderBrush="{DynamicResource BorderSoftBrush}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,16">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                </Grid.RowDefinitions>
+
+                                                <TextBlock Grid.Row="0" Grid.Column="0" Text="Veritabanı Boyutu:" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12.5" />
+                                                <TextBlock x:Name="DatabaseSizeText" Grid.Row="0" Grid.Column="1" Text="Hesaplanıyor..." Foreground="{DynamicResource TextPrimaryBrush}" FontSize="12.5" FontWeight="SemiBold" HorizontalAlignment="Right" />
+
+                                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Veritabanı Konumu:" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12.5" Margin="0,8,0,0" />
+                                                <TextBlock x:Name="DatabasePathText" Grid.Row="1" Grid.Column="1" Text="-" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="12.5" FontWeight="SemiBold" HorizontalAlignment="Right" Margin="0,8,0,0" TextTrimming="CharacterEllipsis" />
+                                            </Grid>
+                                        </Border>
+
+                                        <WrapPanel>
+                                            <Button Content="📂 Veri Klasörünü Aç" MinWidth="160" Height="30" Margin="0,0,8,0" Style="{StaticResource CompactActionButton}" Click="OpenDatabaseFolderBtn_Click" />
+                                            <Button Content="⚠️ Veritabanını Sıfırla" MinWidth="160" Height="30" Style="{StaticResource CompactActionButton}" Click="ResetDatabaseBtn_Click" />
                                         </WrapPanel>
                                     </StackPanel>
                                 </Border>

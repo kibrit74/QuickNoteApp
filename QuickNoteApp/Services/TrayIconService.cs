@@ -13,6 +13,7 @@ public class TrayIconService : IDisposable
 
     public event EventHandler? OpenNoteRequested;
     public event EventHandler? OpenReviewRequested;
+    public event EventHandler? OpenSettingsRequested;
     public event EventHandler? ExitRequested;
 
     public TrayIconService()
@@ -20,6 +21,7 @@ public class TrayIconService : IDisposable
         var menu = new ContextMenuStrip();
         menu.Items.Add("Hızlı not (Ctrl+Shift+N)", null, (_, _) => OpenNoteRequested?.Invoke(this, EventArgs.Empty));
         menu.Items.Add("Gün sonu özeti (Ctrl+Shift+R)", null, (_, _) => OpenReviewRequested?.Invoke(this, EventArgs.Empty));
+        menu.Items.Add("Ayarlar", null, (_, _) => OpenSettingsRequested?.Invoke(this, EventArgs.Empty));
         menu.Items.Add(new ToolStripSeparator());
         menu.Items.Add("Çıkış", null, (_, _) => ExitRequested?.Invoke(this, EventArgs.Empty));
 

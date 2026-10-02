@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using QuickNoteApp.Models;
@@ -11,17 +11,17 @@ public static class GeminiTaskListPrompt
     {
         var builder = new StringBuilder();
         builder.AppendLine($"{date:dd.MM.yyyy} icin Takvim verilerine gore uygulanabilir bir gun plani hazirla.");
-        builder.AppendLine("Cevabi kisa, saat sirali ve Turkce yaz. Takvimdeki sabit etkinlikleri degistirme; bosluklara odaklanma bloklari ve kucuk gorevler yerlestir.");
+        builder.AppendLine("Cevabi kisa, saat sirali ve verilen talimatın diliyle aynı dilde yaz. Takvimdeki sabit etkinlikleri degistirme; bosluklara odaklanma bloklari ve kucuk gorevler yerlestir.");
         builder.AppendLine();
         builder.AppendLine("Format kurallari:");
-        builder.AppendLine("- Görevleri önem sırasına göre [YÜKSEK ÖNCELİK], [ORTA ÖNCELİK], [DÜÅÜK ÖNCELİK] başlıkları altında grupla.");
+        builder.AppendLine("- Görevleri önem sırasına göre [YÜKSEK ÖNCELİK], [ORTA ÖNCELİK], [DÜŞÜK ÖNCELİK] başlıkları altında grupla.");
         builder.AppendLine("- Her görev maddesinin başına varsa ilgili saat aralığını (örn. [10:00 - 11:30]) yerleştir.");
         builder.AppendLine("- Görevin ne olduğunu net, profesyonel ve kısa bir cümleyle açıkla.");
         builder.AppendLine("- Yanıtında giriş cümlesi, açıklama, markdown kod blokları veya yorum ekleme, doğrudan görev gruplarını ve maddelerini listele.");
-        builder.AppendLine("- Cevabın tamamını Türkçe yaz.");
+        builder.AppendLine("- Cevabın tamamını bu talimatla aynı dilde yaz.");
         builder.AppendLine();
 
-        builder.AppendLine($"=== ğŸ“… {date:dd.MM.yyyy} TAKVİM ETKİNLİKLERİ ===");
+        builder.AppendLine($"=== {date:dd.MM.yyyy} TAKVİM ETKİNLİKLERİ ===");
         if (events.Count == 0)
         {
             builder.AppendLine("(Takvimde etkinlik bulunmuyor)");
@@ -35,7 +35,7 @@ public static class GeminiTaskListPrompt
         }
         builder.AppendLine();
 
-        builder.AppendLine($"=== ğŸ“ {date:dd.MM.yyyy} NOTLARI ===");
+        builder.AppendLine($"=== {date:dd.MM.yyyy} NOTLARI ===");
         if (notes.Count == 0)
         {
             builder.AppendLine("(Kaydedilmiş not bulunmuyor)");
@@ -50,7 +50,7 @@ public static class GeminiTaskListPrompt
         }
         builder.AppendLine();
 
-        builder.AppendLine($"=== ğŸ”” {date:dd.MM.yyyy} BİLDİRİMLERİ VE MESAJLAR ===");
+        builder.AppendLine($"=== {date:dd.MM.yyyy} BİLDİRİMLERİ VE MESAJLAR ===");
         if (notifications.Count == 0)
         {
             builder.AppendLine("(Kaydedilmiş bildirim bulunmuyor)");
